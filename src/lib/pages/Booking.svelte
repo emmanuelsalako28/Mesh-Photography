@@ -130,8 +130,8 @@
             <label for="location">Session Location</label>
             <select id="location" bind:value={bookingData.location} required>
               <option value="" disabled selected>Select studio or custom venue</option>
-              <option>Meshach Olajide Studio Island (Lekki Phase 1)</option>
-              <option>Meshach Olajide Studio Mainland (Ogudu)</option>
+              <option>Meshach Olajide Studio Old Town (Vana-Viru)</option>
+              <option>Meshach Olajide Studio City Center (Mustamäe)</option>
               <option>Custom Location (Outdoor / Client Venue)</option>
             </select>
           </div>

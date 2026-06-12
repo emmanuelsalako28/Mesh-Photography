@@ -97,16 +97,16 @@
         <div class="contact-info-item">
           <div class="ci-icon">📍</div>
           <div>
-            <span class="ci-label">Studio Address (Island)</span>
-            <span class="ci-value">1 Bunmi-Olowude St, Lekki Phase 1,<br>Lekki, Lagos State, Nigeria</span>
+            <span class="ci-label">Studio Address (Old Town)</span>
+            <span class="ci-value">Vana-Viru 15,<br>10111 Tallinn, Estonia</span>
           </div>
         </div>
 
         <div class="contact-info-item">
           <div class="ci-icon">📍</div>
           <div>
-            <span class="ci-label">Studio Address (Mainland)</span>
-            <span class="ci-value">90 Victoria Street, Ogudu,<br>Lagos State, Nigeria</span>
+            <span class="ci-label">Studio Address (City Center)</span>
+            <span class="ci-value">Mustamäe tee 4,<br>10621 Tallinn, Estonia</span>
           </div>
         </div>
 
@@ -118,7 +118,7 @@
         <div class="map-placeholder">
           <div class="map-pin">📍</div>
           <div style="text-align:center">
-            <div style="color:var(--ivory);font-size:0.9rem;margin-bottom:0.25rem">Lekki Phase 1, Lagos</div>
+            <div style="color:var(--ivory);font-size:0.9rem;margin-bottom:0.25rem">Old Town, Tallinn</div>
             <div style="font-size:0.75rem">Meshach Olajide Photography Map Pin</div>
           </div>
         </div>

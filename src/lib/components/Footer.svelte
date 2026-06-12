@@ -9,7 +9,7 @@
         <h4 style="font-family: var(--serif); font-style: italic; font-weight: 300;">about meshach olajide</h4>
         <p>
           Meshach Olajide Photography is a professional studio that tells visual stories. 
-          Headquartered in Lagos, Nigeria - Meshach Olajide specialises in Corporate Branding, Storytelling, Corporate Events, and Family Portraiture. At Meshach Olajide Photography, a camera is more than just a tool for capturing photos. It is used to tell visually appealing stories that inspire confidence, celebrate beauty and love as well as create timeless works of art.
+          Headquartered in Tallinn, Estonia - Meshach Olajide specialises in Corporate Branding, Storytelling, Corporate Events, and Family Portraiture. At Meshach Olajide Photography, a camera is more than just a tool for capturing photos. It is used to tell visually appealing stories that inspire confidence, celebrate beauty and love as well as create timeless works of art.
         </p>
       </div>
       <div class="footer-col">
@@ -20,13 +20,13 @@
         </p>
         <br>
         <p style="font-size: 0.75rem;">
-          <span style="color: var(--gold); text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">island studio</span>
-          1 Bunmi-Olowude St, Lekki Phase 1, Lekki, Lagos State.
+          <span style="color: var(--gold); text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">old town studio</span>
+          Vana-Viru 15, 10111 Tallinn, Estonia.
         </p>
         <br>
         <p style="font-size: 0.75rem;">
-          <span style="color: var(--gold); text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">mainland studio</span>
-          90 Victoria Street, Ogudu, Lagos State.
+          <span style="color: var(--gold); text-transform: uppercase; font-size: 0.65rem; letter-spacing: 0.1em; display: block; margin-bottom: 0.25rem;">city center studio</span>
+          Mustamäe tee 4, 10621 Tallinn, Estonia.
         </p>
       </div>
       <div class="footer-col">

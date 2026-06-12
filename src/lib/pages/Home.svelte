@@ -5,7 +5,8 @@
    * @param {MouseEvent} e
    */
   function handleMouseMove3D(e) {
-    const card = e.currentTarget;
+    const card = /** @type {HTMLElement} */ (e.currentTarget);
+    if (!card) return;
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -21,7 +22,8 @@
    * @param {MouseEvent} e
    */
   function handleMouseLeave3D(e) {
-    const card = e.currentTarget;
+    const card = /** @type {HTMLElement} */ (e.currentTarget);
+    if (!card) return;
     card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
     card.style.boxShadow = 'none';
   }
@@ -83,7 +85,7 @@
       <div class="hero-content">
         <span class="hero-eyebrow">Award-winning photography studio</span>
         <h1 class="hero-title">Create Timeless<br><em>Works of Art</em></h1>
-        <p class="hero-sub">Lagos, Nigeria</p>
+        <p class="hero-sub">Tallinn, Estonia</p>
         <div class="hero-btns">
           <button class="btn-primary" onclick={() => showPage('booking')}>Book a Session</button>
           <button class="btn-outline" onclick={() => showPage('portfolio')}>View Portfolio</button>
@@ -96,7 +98,7 @@
       <div class="hero-content">
         <span class="hero-eyebrow">Visual Storytellers</span>
         <h1 class="hero-title">Tell Visually Appealing<br><em>Stories</em></h1>
-        <p class="hero-sub">Lekki & Ogudu Studios, Lagos</p>
+        <p class="hero-sub">Vana-Viru & Mustamäe Studios, Tallinn</p>
         <div class="hero-btns">
           <button class="btn-primary" onclick={() => showPage('booking')}>Book a Session</button>
           <button class="btn-outline" onclick={() => showPage('portfolio')}>View Portfolio</button>

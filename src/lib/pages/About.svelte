@@ -14,7 +14,7 @@
       <div>
         <span class="section-label">My Story</span>
         <h2 style="font-family:var(--serif);font-size:clamp(1.8rem,3vw,2.5rem);margin-bottom:1.5rem;line-height:1.2">Turning Ordinary<br>Moments Into <em style="font-style:italic;color:var(--gold)">Art</em></h2>
-        <p style="color:var(--muted);font-size:0.88rem;line-height:1.9;margin-bottom:1.25rem">Meshach Olajide Photography is a professional studio that tells visual stories. Headquartered in Lagos, Nigeria, we specialise in Corporate Branding, Storytelling, Corporate Events, and Family Portraiture.</p>
+        <p style="color:var(--muted);font-size:0.88rem;line-height:1.9;margin-bottom:1.25rem">Meshach Olajide Photography is a professional studio that tells visual stories. Headquartered in Tallinn, Estonia, we specialise in Corporate Branding, Storytelling, Corporate Events, and Family Portraiture.</p>
         <p style="color:var(--muted);font-size:0.88rem;line-height:1.9;margin-bottom:1.25rem">At Meshach Olajide Photography, a camera is more than just a tool for capturing photos. It is used to tell visually appealing stories that inspire confidence, celebrate beauty and love, as well as create timeless works of art.</p>
         <p style="color:var(--muted);font-size:0.88rem;line-height:1.9;margin-bottom:2rem">Every session is a structured collaboration. Our style remains cinematic, crisp, and editorial with an organic depth. We believe the finest frames emerge when the lens is forgotten.</p>
         <button class="btn-primary" onclick={() => showPage('booking')}>Work With Me</button>

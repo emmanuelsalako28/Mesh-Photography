@@ -848,7 +848,7 @@ nav.scrolled {
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
-.booking-info {}
+
 .info-block {
   margin-bottom: 2rem;
   padding-bottom: 2rem;
@@ -891,7 +891,7 @@ nav.scrolled {
   font-size: 1.1rem;
   flex-shrink: 0;
 }
-.cm-text {}
+
 .cm-label {
   font-size: 0.65rem;
   letter-spacing: 0.1em;
@@ -917,7 +917,7 @@ nav.scrolled {
   margin-top: 2rem;
   align-items: start;
 }
-.contact-info {}
+
 .contact-info-item {
   display: flex;
   gap: 1.25rem;
@@ -991,7 +991,7 @@ nav.scrolled {
   border-color: var(--gold);
   color: var(--gold);
 }
-.contact-form-mini {}
+
 .submit-btn {
   width: 100%;
   background: var(--gold);
