@@ -1,4 +1,6 @@
 <script>
+  import { supabase } from '../supabaseClient.js';
+
   let contactData = $state({
     name: '',
     email: '',
@@ -17,6 +19,41 @@
     isSubmitting = true;
     submitStatus = { type: '', message: '' };
 
+    // Try Supabase directly first if configured
+    if (supabase) {
+      try {
+        const { error } = await supabase
+          .from('messages')
+          .insert([
+            {
+              name: contactData.name,
+              email: contactData.email,
+              subject: contactData.subject,
+              message: contactData.message
+            }
+          ]);
+
+        if (error) throw error;
+
+        submitStatus = {
+          type: 'success',
+          message: "Message sent! We'll respond within 24 hours."
+        };
+        // Reset form
+        contactData = {
+          name: '',
+          email: '',
+          subject: 'General Inquiry',
+          message: ''
+        };
+        isSubmitting = false;
+        return;
+      } catch (sbError) {
+        console.warn('Supabase insertion failed, falling back to local server:', sbError);
+      }
+    }
+
+    // Fallback: local Express server API
     try {
       const response = await fetch('http://localhost:5000/api/contact', {
         method: 'POST',

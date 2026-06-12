@@ -1,4 +1,6 @@
 <script>
+  import { supabase } from '../supabaseClient.js';
+
   let bookingData = $state({
     firstName: '',
     lastName: '',
@@ -22,6 +24,51 @@
     isSubmitting = true;
     submitStatus = { type: '', message: '' };
 
+    // Try Supabase directly first if configured
+    if (supabase) {
+      try {
+        const { error } = await supabase
+          .from('bookings')
+          .insert([
+            {
+              first_name: bookingData.firstName,
+              last_name: bookingData.lastName,
+              email: bookingData.email,
+              phone: bookingData.phone,
+              session_type: bookingData.sessionType,
+              preferred_date: bookingData.preferredDate,
+              preferred_time: bookingData.preferredTime,
+              location: bookingData.location,
+              notes: bookingData.notes
+            }
+          ]);
+
+        if (error) throw error;
+
+        submitStatus = {
+          type: 'success',
+          message: `Booking request submitted successfully! We'll confirm your session at ${bookingData.location} within 24 hours.`
+        };
+        // Reset form
+        bookingData = {
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          sessionType: '',
+          preferredDate: '',
+          preferredTime: '',
+          location: '',
+          notes: ''
+        };
+        isSubmitting = false;
+        return;
+      } catch (sbError) {
+        console.warn('Supabase insertion failed, falling back to local server:', sbError);
+      }
+    }
+
+    // Fallback: local Express server API
     try {
       const response = await fetch('http://localhost:5000/api/booking', {
         method: 'POST',

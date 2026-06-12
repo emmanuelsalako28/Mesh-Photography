@@ -44,7 +44,7 @@
   {/if}
   
   <div class="footer-bottom" style={isSimplified ? 'max-width:1100px;margin:0 auto;padding:1.5rem 0 0;border-top:none;' : ''}>
-    <p>COPYRIGHT © 2026 MESHACH OLAJIDE PHOTOGRAPHY. ALL RIGHTS RESERVED.</p>
+    <p>COPYRIGHT © 2026 MESHACH OLAJIDE PHOTOGRAPHY. ALL RIGHTS RESERVED. &bull; <a href="#admin" onclick={(e) => { e.preventDefault(); showPage('admin'); }} style="text-decoration: none; color: inherit; opacity: 0.6; transition: opacity 0.2s;" onmouseenter={(e) => e.currentTarget.style.opacity = '1'} onmouseleave={(e) => e.currentTarget.style.opacity = '0.6'} class="admin-link">STUDIO ADMIN</a></p>
     <div class="social-links">
       <a href="https://www.instagram.com/meshacholajidephotography/" target="_blank" rel="noopener noreferrer">IG</a>
       <a href="https://twitter.com/meshacholajide" target="_blank" rel="noopener noreferrer">X</a>

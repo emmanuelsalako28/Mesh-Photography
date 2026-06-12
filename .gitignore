@@ -26,3 +26,8 @@ dist-ssr
 # Backend
 server/node_modules/
 server/data/
+
+# Secrets
+.env
+.env.*
+!.env.example

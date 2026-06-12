@@ -26,7 +26,11 @@
     card.style.boxShadow = 'none';
   }
 
-  const items = [
+  import { supabase } from '../supabaseClient.js';
+
+  let portfolioItems = $state([]);
+
+  const defaultItems = [
     { id: 1, pcat: 'portraits', title: 'Portrait – Personal Branding', class: 'ph-portrait', art: '◆', pt: '130%' },
     { id: 2, pcat: 'events', title: 'Event – Corporate Conference', class: 'ph-event', art: '◈', pt: '80%' },
     { id: 3, pcat: 'family', title: 'Family – Maternity Session', class: 'ph-family', art: '❋', pt: '120%' },
@@ -38,10 +42,43 @@
     { id: 9, pcat: 'family', title: 'Family – Group Portrait', class: 'ph-family', art: '❋', pt: '100%' }
   ];
 
+  async function loadPortfolio() {
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('portfolio_items')
+          .select('*')
+          .order('created_at', { ascending: true });
+        
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          portfolioItems = data.map(item => ({
+            id: item.id,
+            pcat: item.category,
+            title: item.title,
+            class: item.category === 'videos' ? '' : `ph-${item.category}`,
+            art: item.art_symbol,
+            pt: item.aspect_ratio,
+            style: item.custom_style || ''
+          }));
+          return;
+        }
+      } catch (err) {
+        console.warn('Could not load portfolio from Supabase, using defaults:', err);
+      }
+    }
+    portfolioItems = [...defaultItems];
+  }
+
+  $effect(() => {
+    loadPortfolio();
+  });
+
   let filteredItems = $derived(
     activeCategory === 'all'
-      ? items
-      : items.filter(item => item.pcat === activeCategory)
+      ? portfolioItems
+      : portfolioItems.filter(item => item.pcat === activeCategory)
   );
 </script>
 

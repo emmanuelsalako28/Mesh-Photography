@@ -13,6 +13,7 @@
   import Booking from './lib/pages/Booking.svelte';
   import Contact from './lib/pages/Contact.svelte';
   import Blog from './lib/pages/Blog.svelte';
+  import Admin from './lib/pages/Admin.svelte';
 
   // Routing and UI State
   let currentPage = $state('home');
@@ -38,7 +39,8 @@
     about: 'ABOUT - Meshach Olajide Photography',
     booking: 'BOOK A SESSION - Meshach Olajide Photography',
     contact: 'CONTACT & BOOKINGS - Meshach Olajide Photography',
-    blog: 'THE JOURNAL - Meshach Olajide Photography'
+    blog: 'THE JOURNAL - Meshach Olajide Photography',
+    admin: 'STUDIO ADMIN - Meshach Olajide Photography'
   };
 
   // Helper functions
@@ -50,6 +52,12 @@
     currentPage = page;
     if (page === 'portfolio') {
       portfolioCategory = category;
+    }
+    // Update hash for admin navigation to maintain state on reload
+    if (page === 'admin') {
+      window.location.hash = '#admin';
+    } else if (window.location.hash === '#admin') {
+      window.location.hash = '';
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -70,6 +78,21 @@
   function closeLightbox() {
     lightbox = { isOpen: false, title: '', style: '', symbol: '' };
   }
+
+  // Parse URL hash or query params on load/hashchange
+  $effect(() => {
+    const handleUrlRouting = () => {
+      const hash = window.location.hash;
+      const params = new URLSearchParams(window.location.search);
+      if (hash === '#admin' || params.get('page') === 'admin') {
+        currentPage = 'admin';
+      }
+    };
+    
+    handleUrlRouting();
+    window.addEventListener('hashchange', handleUrlRouting);
+    return () => window.removeEventListener('hashchange', handleUrlRouting);
+  });
 </script>
 
 <svelte:head>
@@ -96,6 +119,8 @@
     <Contact />
   {:else if currentPage === 'blog'}
     <Blog />
+  {:else if currentPage === 'admin'}
+    <Admin />
   {/if}
 </main>
 
