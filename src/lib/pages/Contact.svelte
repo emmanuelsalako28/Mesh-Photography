@@ -165,7 +165,7 @@
         <br><br>
         <div style="border:1px solid var(--border);padding:1.5rem;text-align:center">
           <p style="font-size:0.75rem;color:var(--muted);margin-bottom:1rem">Prefer to chat directly?</p>
-          <a class="btn-primary" href="https://wa.me/2348151140526" target="_blank" rel="noopener noreferrer" style="display:inline-block">Message on WhatsApp</a>
+          <a class="btn-primary" href="https://wa.me/2348138245455" target="_blank" rel="noopener noreferrer" style="display:inline-block">Message on WhatsApp</a>
         </div>
       </div>
     </div>
