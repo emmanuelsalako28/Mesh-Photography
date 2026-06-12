@@ -79,7 +79,7 @@
   <!-- HERO SLIDER -->
   <div class="hero-slider-wrap">
     <!-- Slide 1 -->
-    <div class="hero-slide" class:active={activeSlide === 0} style="background-image: linear-gradient(to right, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.2) 100%), url('/hero1.png'); background-size: cover; background-position: 65% 15%;">
+    <div class="hero-slide" class:active={activeSlide === 0} style="--hero-img: url('/hero1.png');">
       <div class="hero-content">
         <span class="hero-eyebrow">Award-winning photography studio</span>
         <h1 class="hero-title">Create Timeless<br><em>Works of Art</em></h1>
@@ -92,7 +92,7 @@
     </div>
 
     <!-- Slide 2 -->
-    <div class="hero-slide" class:active={activeSlide === 1} style="background-image: linear-gradient(to right, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.2) 100%), url('/hero2.jpg'); background-size: cover; background-position: 65% 15%;">
+    <div class="hero-slide" class:active={activeSlide === 1} style="--hero-img: url('/hero2.jpg');">
       <div class="hero-content">
         <span class="hero-eyebrow">Visual Storytellers</span>
         <h1 class="hero-title">Tell Visually Appealing<br><em>Stories</em></h1>
