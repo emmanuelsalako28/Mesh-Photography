@@ -1624,3 +1624,76 @@ footer {
   border: 1px solid var(--gold) !important;
   box-shadow: 0 15px 35px rgba(200, 169, 126, 0.08);
 }
+
+/* ==================== CMS ADMIN DASHBOARD UPGRADES ==================== */
+.dashboard-tabs {
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none; /* Firefox */
+}
+.dashboard-tabs::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+.image-uploader-dropzone {
+  border: 1.5px dashed var(--gold);
+  background: rgba(201, 167, 78, 0.02);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  margin-top: 0.5rem;
+}
+.image-uploader-dropzone:hover {
+  background: rgba(201, 167, 78, 0.07);
+  border-color: var(--ivory);
+}
+.file-input-hidden {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+.uploader-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+.uploader-icon {
+  font-size: 2.2rem;
+  color: var(--gold);
+  margin-bottom: 0.25rem;
+  transition: transform 0.3s ease;
+}
+.image-uploader-dropzone:hover .uploader-icon {
+  transform: rotate(12deg) scale(1.15);
+}
+.uploader-text {
+  font-size: 0.88rem;
+  color: var(--ivory);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+.uploader-filename {
+  font-size: 0.88rem;
+  color: var(--gold);
+  font-weight: 600;
+}
+.uploader-hint {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.auth-success {
+  background: rgba(201, 167, 78, 0.08);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: 0.85rem;
+  text-align: center;
+  font-size: 0.82rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}

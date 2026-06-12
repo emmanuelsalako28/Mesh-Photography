@@ -1,4 +1,7 @@
 <script>
+  import { onMount } from 'svelte';
+  import { supabase } from '../supabaseClient.js';
+
   let { showPage } = $props();
 
   /**
@@ -25,6 +28,79 @@
     card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
     card.style.boxShadow = 'none';
   }
+
+  const defaultServices = [
+    {
+      id: 1,
+      name: "Starter Session",
+      price: "₦50,000",
+      description: "A focused, quick capture session suitable for milestones, simple headshots, or quick profile updates.",
+      features: [
+        "1-hour studio session",
+        "1 outfit change",
+        "15 edited digital images",
+        "Online gallery access",
+        "7-day delivery"
+      ],
+      featured: false,
+      badge: null
+    },
+    {
+      id: 2,
+      name: "Signature Session",
+      price: "₦100,000",
+      description: "The standard photography session. Allows full creative styling, posture direction, and choice of studio or outdoor spaces.",
+      features: [
+        "2-hour studio/outdoor session",
+        "2 outfit changes",
+        "30 edited digital images",
+        "Creative direction consulting",
+        "Online gallery access",
+        "5-day delivery"
+      ],
+      featured: true,
+      badge: "Signature"
+    },
+    {
+      id: 3,
+      name: "Premium Experience",
+      price: "₦200,000",
+      description: "An exhaustive, multi-set production session. Includes comprehensive direction, makeup artist coordination, and USB archiving.",
+      features: [
+        "Half-day (up to 4 hours)",
+        "Unlimited outfit changes",
+        "60+ edited digital images",
+        "Full creative direction",
+        "Makeup coordination",
+        "Online gallery + USB delivery",
+        "Priority 3-day delivery"
+      ],
+      featured: false,
+      badge: null
+    }
+  ];
+
+  let dbServices = $state([]);
+
+  onMount(async () => {
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('services')
+          .select('*')
+          .order('created_at', { ascending: true });
+        
+        if (error) throw error;
+        if (data && data.length > 0) {
+          dbServices = data;
+        }
+      } catch (err) {
+        console.warn('Could not load services from Supabase, using defaults:', err);
+      }
+    }
+  });
+
+  let activeServicesList = $derived(dbServices.length > 0 ? dbServices : defaultServices);
 </script>
 
 <div class="page active" id="page-services">
@@ -36,60 +112,25 @@
   
   <div class="services-page">
     <div class="pricing-grid reveal">
-      <div class="pricing-card card-3d" role="presentation" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D}>
-        <div class="card-3d-inner">
-          <h3 class="pricing-name">Starter Session</h3>
-          <div class="pricing-price">₦50,000</div>
-          <p style="color:var(--muted);font-size:0.8rem;margin-bottom:1rem">A focused, quick capture session suitable for milestones, simple headshots, or quick profile updates.</p>
-          <ul class="pricing-list">
-            <li>1-hour studio session</li>
-            <li>1 outfit change</li>
-            <li>15 edited digital images</li>
-            <li>Online gallery access</li>
-            <li>7-day delivery</li>
-          </ul>
-          <button class="btn-primary" onclick={() => showPage('booking')} style="width: 100%;">Select Starter</button>
-          <a href="#contact" onclick={(e) => { e.preventDefault(); showPage('contact'); }} style="display:block; text-align:center; color:var(--gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; margin-top:1rem; font-weight:600; text-decoration:none;">Inquire For Details →</a>
+      {#each activeServicesList as s (s.id)}
+        <div class="pricing-card card-3d" class:featured={s.featured} role="presentation" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D}>
+          <div class="card-3d-inner">
+            {#if s.badge}
+              <span class="pricing-badge">{s.badge}</span>
+            {/if}
+            <h3 class="pricing-name">{s.name}</h3>
+            <div class="pricing-price">{s.price}</div>
+            <p style="color:var(--muted);font-size:0.8rem;margin-bottom:1rem">{s.description}</p>
+            <ul class="pricing-list">
+              {#each s.features as feature}
+                <li>{feature}</li>
+              {/each}
+            </ul>
+            <button class="btn-primary" onclick={() => showPage('booking')} style="width: 100%;">Select {s.name.split(' ')[0]}</button>
+            <a href="#contact" onclick={(e) => { e.preventDefault(); showPage('contact'); }} style="display:block; text-align:center; color:var(--gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; margin-top:1rem; font-weight:600; text-decoration:none;">Inquire For Details →</a>
+          </div>
         </div>
-      </div>
-
-      <div class="pricing-card featured card-3d" role="presentation" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D}>
-        <div class="card-3d-inner">
-          <span class="pricing-badge">Signature</span>
-          <h3 class="pricing-name">Signature Session</h3>
-          <div class="pricing-price">₦100,000</div>
-          <p style="color:var(--muted);font-size:0.8rem;margin-bottom:1rem">The standard photography session. Allows full creative styling, posture direction, and choice of studio or outdoor spaces.</p>
-          <ul class="pricing-list">
-            <li>2-hour studio/outdoor session</li>
-            <li>2 outfit changes</li>
-            <li>30 edited digital images</li>
-            <li>Creative direction consulting</li>
-            <li>Online gallery access</li>
-            <li>5-day delivery</li>
-          </ul>
-          <button class="btn-primary" onclick={() => showPage('booking')} style="width: 100%;">Select Signature</button>
-          <a href="#contact" onclick={(e) => { e.preventDefault(); showPage('contact'); }} style="display:block; text-align:center; color:var(--gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; margin-top:1rem; font-weight:600; text-decoration:none;">Inquire For Details →</a>
-        </div>
-      </div>
-
-      <div class="pricing-card card-3d" role="presentation" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D}>
-        <div class="card-3d-inner">
-          <h3 class="pricing-name">Premium Experience</h3>
-          <div class="pricing-price">₦200,000</div>
-          <p style="color:var(--muted);font-size:0.8rem;margin-bottom:1rem">An exhaustive, multi-set production session. Includes comprehensive direction, makeup artist coordination, and USB archiving.</p>
-          <ul class="pricing-list">
-            <li>Half-day (up to 4 hours)</li>
-            <li>Unlimited outfit changes</li>
-            <li>60+ edited digital images</li>
-            <li>Full creative direction</li>
-            <li>Makeup coordination</li>
-            <li>Online gallery + USB delivery</li>
-            <li>Priority 3-day delivery</li>
-          </ul>
-          <button class="btn-primary" onclick={() => showPage('booking')} style="width: 100%;">Select Experience</button>
-          <a href="#contact" onclick={(e) => { e.preventDefault(); showPage('contact'); }} style="display:block; text-align:center; color:var(--gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; margin-top:1rem; font-weight:600; text-decoration:none;">Inquire For Details →</a>
-        </div>
-      </div>
+      {/each}
     </div>
 
     <!-- Details of individual categories -->

@@ -1,5 +1,40 @@
 <script>
+  import { onMount } from 'svelte';
+  import { supabase } from '../supabaseClient.js';
+
   let { showPage } = $props();
+
+  const defaultProfile = {
+    bio_title: `Turning Ordinary<br>Moments Into <em style="font-style:italic;color:var(--gold)">Art</em>`,
+    bio_paragraph_1: "Meshach Olajide Photography is a professional studio that tells visual stories. Headquartered in Tallinn, Estonia, we specialise in Corporate Branding, Storytelling, Corporate Events, and Family Portraiture.",
+    bio_paragraph_2: "At Meshach Olajide Photography, a camera is more than just a tool for capturing photos. It is used to tell visually appealing stories that inspire confidence, celebrate beauty and love, as well as create timeless works of art.",
+    bio_paragraph_3: "Every session is a structured collaboration. Our style remains cinematic, crisp, and editorial with an organic depth. We believe the finest frames emerge when the lens is forgotten.",
+    stats_sessions: "500+",
+    stats_clients: "100+",
+    stats_experience: "5+",
+    stats_response_time: "24hr"
+  };
+
+  let profile = $state({ ...defaultProfile });
+
+  onMount(async () => {
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('about_profile')
+          .select('*')
+          .eq('id', 1)
+          .single();
+        
+        if (error) throw error;
+        if (data) {
+          profile = data;
+        }
+      } catch (err) {
+        console.warn('Could not load profile from Supabase, using defaults:', err);
+      }
+    }
+  });
 </script>
 
 <div class="page active" id="page-about">
@@ -13,20 +48,22 @@
       <div class="big-frame">◆</div>
       <div>
         <span class="section-label">My Story</span>
-        <h2 style="font-family:var(--serif);font-size:clamp(1.8rem,3vw,2.5rem);margin-bottom:1.5rem;line-height:1.2">Turning Ordinary<br>Moments Into <em style="font-style:italic;color:var(--gold)">Art</em></h2>
-        <p style="color:var(--muted);font-size:0.88rem;line-height:1.9;margin-bottom:1.25rem">Meshach Olajide Photography is a professional studio that tells visual stories. Headquartered in Tallinn, Estonia, we specialise in Corporate Branding, Storytelling, Corporate Events, and Family Portraiture.</p>
-        <p style="color:var(--muted);font-size:0.88rem;line-height:1.9;margin-bottom:1.25rem">At Meshach Olajide Photography, a camera is more than just a tool for capturing photos. It is used to tell visually appealing stories that inspire confidence, celebrate beauty and love, as well as create timeless works of art.</p>
-        <p style="color:var(--muted);font-size:0.88rem;line-height:1.9;margin-bottom:2rem">Every session is a structured collaboration. Our style remains cinematic, crisp, and editorial with an organic depth. We believe the finest frames emerge when the lens is forgotten.</p>
+        <h2 style="font-family:var(--serif);font-size:clamp(1.8rem,3vw,2.5rem);margin-bottom:1.5rem;line-height:1.2">
+          {@html profile.bio_title}
+        </h2>
+        <p style="color:var(--muted);font-size:0.88rem;line-height:1.9;margin-bottom:1.25rem">{profile.bio_paragraph_1}</p>
+        <p style="color:var(--muted);font-size:0.88rem;line-height:1.9;margin-bottom:1.25rem">{profile.bio_paragraph_2}</p>
+        <p style="color:var(--muted);font-size:0.88rem;line-height:1.9;margin-bottom:2rem">{profile.bio_paragraph_3}</p>
         <button class="btn-primary" onclick={() => showPage('booking')}>Work With Me</button>
       </div>
     </div>
 
     <!-- Stats -->
     <div class="stat-row">
-      <div class="stat-item"><span class="stat-num">500+</span><span class="stat-label">Sessions Delivered</span></div>
-      <div class="stat-item"><span class="stat-num">100+</span><span class="stat-label">Happy Clients</span></div>
-      <div class="stat-item"><span class="stat-num">5+</span><span class="stat-label">Years Experience</span></div>
-      <div class="stat-item"><span class="stat-num">24hr</span><span class="stat-label">Response Time</span></div>
+      <div class="stat-item"><span class="stat-num">{profile.stats_sessions}</span><span class="stat-label">Sessions Delivered</span></div>
+      <div class="stat-item"><span class="stat-num">{profile.stats_clients}</span><span class="stat-label">Happy Clients</span></div>
+      <div class="stat-item"><span class="stat-num">{profile.stats_experience}</span><span class="stat-label">Years Experience</span></div>
+      <div class="stat-item"><span class="stat-num">{profile.stats_response_time}</span><span class="stat-label">Response Time</span></div>
     </div>
 
     <!-- Philosophy Brand Story -->

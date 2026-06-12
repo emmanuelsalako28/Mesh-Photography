@@ -60,7 +60,8 @@
             class: item.category === 'videos' ? '' : `ph-${item.category}`,
             art: item.art_symbol,
             pt: item.aspect_ratio,
-            style: item.custom_style || ''
+            style: item.custom_style || '',
+            image_url: item.image_url
           }));
           return;
         }
@@ -102,9 +103,11 @@
 
       <div class="masonry-grid" id="masonryGrid">
         {#each filteredItems as item (item.id)}
-          <div class="masonry-item card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} onclick={() => openLightbox(item.title)} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && openLightbox(item.title)}>
-            <div class="photo-placeholder {item.class} card-3d-inner" style="padding-top: {item.pt}; position: relative; {item.style || ''}">
-              <div class="photo-art" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 4rem;">{item.art}</div>
+          <div class="masonry-item card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} onclick={() => openLightbox(item.title, item.class, item.art, item.image_url)} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && openLightbox(item.title, item.class, item.art, item.image_url)}>
+            <div class="photo-placeholder {item.class} card-3d-inner" style="padding-top: {item.pt}; position: relative; {item.image_url ? `background-image: url(${item.image_url}); background-size: cover; background-position: center;` : item.style || ''}">
+              {#if !item.image_url}
+                <div class="photo-art" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 4rem;">{item.art}</div>
+              {/if}
             </div>
             <span class="masonry-cat">{item.pcat}</span>
           </div>

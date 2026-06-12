@@ -1,5 +1,5 @@
 <script>
-  let { isOpen = false, title = '', style = '', symbol = '', closeLightbox } = $props();
+  let { isOpen = false, title = '', style = '', symbol = '', imageUrl = '', closeLightbox } = $props();
 
   // Control scrolling on the document body when lightbox is active
   $effect(() => {
@@ -25,7 +25,14 @@
     <button class="lightbox-close" onclick={closeLightbox}>×</button>
     <div class="lightbox-inner">
       <div class="lightbox-placeholder">
-        {#if style}
+        {#if imageUrl}
+          <div style="display:flex;flex-direction:column;align-items:center;gap:1.5rem;">
+            <img src={imageUrl} alt={title} style="max-width: 80vw; max-height: 70vh; width: auto; height: auto; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.8); object-fit: contain;" />
+            <div style="font-size:0.9rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);text-align:center;font-weight:600;">
+              {title}
+            </div>
+          </div>
+        {:else if style}
           <div style="display:flex;flex-direction:column;align-items:center;gap:1.5rem;">
             <div class="{style}" style="width: 75vw; max-width: 380px; aspect-ratio: 128/169; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.8); position: relative; display: flex; align-items: center; justify-content: center;">
               <div class="photo-art" style="font-size: 8rem; opacity: 0.2;">{symbol || '◆'}</div>

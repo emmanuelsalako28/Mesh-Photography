@@ -1,4 +1,7 @@
 <script>
+  import { onMount } from 'svelte';
+  import { supabase } from '../supabaseClient.js';
+
   let { showPage, openLightbox } = $props();
 
   /**
@@ -41,11 +44,15 @@
   });
 
   function nextTestimonial() {
-    activeTestimonial = (activeTestimonial + 1) % 3;
+    if (activeTestimonialsList.length > 0) {
+      activeTestimonial = (activeTestimonial + 1) % activeTestimonialsList.length;
+    }
   }
 
   function prevTestimonial() {
-    activeTestimonial = (activeTestimonial - 1 + 3) % 3;
+    if (activeTestimonialsList.length > 0) {
+      activeTestimonial = (activeTestimonial - 1 + activeTestimonialsList.length) % activeTestimonialsList.length;
+    }
   }
 
   // Auto-playing testimonials slider
@@ -103,10 +110,55 @@
     }
   ];
 
+  let dbPhotos = $state([]);
+  let dbTestimonials = $state([]);
+
+  onMount(async () => {
+    if (supabase) {
+      try {
+        const { data: pData } = await supabase
+          .from('portfolio_items')
+          .select('*')
+          .order('created_at', { ascending: true });
+        if (pData && pData.length > 0) {
+          dbPhotos = pData.map(item => ({
+            id: item.id,
+            cat: item.category,
+            label: item.title,
+            class: item.category === 'videos' ? '' : `ph-${item.category}`,
+            art: item.art_symbol,
+            image_url: item.image_url,
+            style: item.custom_style || ''
+          }));
+        }
+
+        const { data: tData } = await supabase
+          .from('testimonials')
+          .select('*')
+          .order('created_at', { ascending: true });
+        if (tData && tData.length > 0) {
+          dbTestimonials = tData.map(item => ({
+            quote: item.quote,
+            author: item.author,
+            role: item.role,
+            org: item.org,
+            portraitClass: item.portrait_class,
+            portraitArt: item.portrait_art
+          }));
+        }
+      } catch (err) {
+        console.warn('Error loading homepage data from Supabase:', err);
+      }
+    }
+  });
+
+  let activePhotos = $derived(dbPhotos.length > 0 ? dbPhotos : photos);
+  let activeTestimonialsList = $derived(dbTestimonials.length > 0 ? dbTestimonials : testimonials);
+
   let filteredPhotos = $derived(
     activeFilter === 'all'
-      ? photos
-      : photos.filter(p => p.cat === activeFilter)
+      ? activePhotos
+      : activePhotos.filter(p => p.cat === activeFilter)
   );
 
   $effect(() => {
@@ -186,9 +238,11 @@
 
     <div class="photo-grid reveal" style="width: 100%; margin-top: 3rem; gap: 0;">
       {#each filteredPhotos as photo (photo.id)}
-        <div class="photo-card card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} onclick={() => openLightbox(photo.label, photo.class, photo.art)} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && openLightbox(photo.label, photo.class, photo.art)}>
-          <div class="photo-placeholder {photo.class} card-3d-inner">
-            <div class="photo-art">{photo.art}</div>
+        <div class="photo-card card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} onclick={() => openLightbox(photo.label, photo.class, photo.art, photo.image_url)} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && openLightbox(photo.label, photo.class, photo.art, photo.image_url)}>
+          <div class="photo-placeholder {photo.class} card-3d-inner" style="position: relative; {photo.image_url ? `background-image: url(${photo.image_url}); background-size: cover; background-position: center;` : photo.style || ''}">
+            {#if !photo.image_url}
+              <div class="photo-art">{photo.art}</div>
+            {/if}
           </div>
           <div class="photo-overlay"></div>
           <div class="photo-label">{photo.label}</div>
@@ -258,24 +312,26 @@
       
       <div class="testimonials-slider reveal">
         {#key activeTestimonial}
-          <div class="testimonial-slide-layout">
-            <div class="testimonial-slide-left">
-              <div class="testimonial-portrait-frame {testimonials[activeTestimonial].portraitClass}">
-                <span class="testimonial-portrait-art">{testimonials[activeTestimonial].portraitArt}</span>
+          {#if activeTestimonialsList && activeTestimonialsList[activeTestimonial]}
+            <div class="testimonial-slide-layout">
+              <div class="testimonial-slide-left">
+                <div class="testimonial-portrait-frame {activeTestimonialsList[activeTestimonial].portraitClass}">
+                  <span class="testimonial-portrait-art">{activeTestimonialsList[activeTestimonial].portraitArt}</span>
+                </div>
+              </div>
+              <div class="testimonial-slide-right">
+                <span class="testimonial-slide-quote-icon">“</span>
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-slide-quote">“{activeTestimonialsList[activeTestimonial].quote}”</p>
+                <div class="testimonial-meta">
+                  <h3 class="testimonial-slide-author">{activeTestimonialsList[activeTestimonial].author}</h3>
+                  <p class="testimonial-slide-title">
+                    {activeTestimonialsList[activeTestimonial].role} <span style="color:var(--gold)">/</span> {activeTestimonialsList[activeTestimonial].org}
+                  </p>
+                </div>
               </div>
             </div>
-            <div class="testimonial-slide-right">
-              <span class="testimonial-slide-quote-icon">“</span>
-              <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-slide-quote">“{testimonials[activeTestimonial].quote}”</p>
-              <div class="testimonial-meta">
-                <h3 class="testimonial-slide-author">{testimonials[activeTestimonial].author}</h3>
-                <p class="testimonial-slide-title">
-                  {testimonials[activeTestimonial].role} <span style="color:var(--gold)">/</span> {testimonials[activeTestimonial].org}
-                </p>
-              </div>
-            </div>
-          </div>
+          {/if}
         {/key}
 
         <div class="testimonial-controls">
@@ -284,7 +340,7 @@
           </button>
           
           <div class="testimonial-indicators">
-            {#each testimonials as _, idx}
+            {#each activeTestimonialsList as _, idx}
               <button 
                 class="testimonial-dot" 
                 class:active={idx === activeTestimonial} 

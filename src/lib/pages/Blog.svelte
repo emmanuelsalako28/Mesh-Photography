@@ -1,7 +1,11 @@
 <script>
-  let activeArticle = $state(null);
+  import { onMount } from 'svelte';
+  import { supabase } from '../supabaseClient.js';
 
-  const posts = [
+  let activeArticle = $state(null);
+  let dbPosts = $state([]);
+
+  const defaultPosts = [
     {
       id: 1,
       category: 'editorial',
@@ -67,6 +71,36 @@
     activeArticle = null;
     document.body.style.overflow = '';
   }
+
+  onMount(async () => {
+    if (supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('blog_posts')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        if (data && data.length > 0) {
+          dbPosts = data.map(item => ({
+            id: item.id,
+            category: item.category,
+            title: item.title,
+            excerpt: item.excerpt,
+            content: item.content,
+            date: item.date,
+            readTime: item.read_time,
+            class: item.cover_class,
+            symbol: item.cover_symbol
+          }));
+        }
+      } catch (err) {
+        console.warn('Could not load blog posts from Supabase, using defaults:', err);
+      }
+    }
+  });
+
+  let activePostsList = $derived(dbPosts.length > 0 ? dbPosts : defaultPosts);
 </script>
 
 <div class="page active" id="page-blog">
@@ -78,7 +112,7 @@
 
   <div class="portfolio-container" style="margin-top: 2rem;">
     <div class="blog-grid">
-      {#each posts as post (post.id)}
+      {#each activePostsList as post (post.id)}
         <div class="blog-card" onclick={() => openArticle(post)} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && openArticle(post)}>
           <div class="blog-image-wrap {post.class}">
             <span class="blog-symbol">{post.symbol}</span>

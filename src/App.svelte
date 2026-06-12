@@ -71,12 +71,18 @@
    * @param {string} style
    * @param {string} symbol
    */
-  function openLightbox(title, style = '', symbol = '') {
-    lightbox = { isOpen: true, title, style, symbol };
+  /**
+   * @param {string} title
+   * @param {string} style
+   * @param {string} symbol
+   * @param {string} imageUrl
+   */
+  function openLightbox(title, style = '', symbol = '', imageUrl = '') {
+    lightbox = { isOpen: true, title, style, symbol, imageUrl };
   }
 
   function closeLightbox() {
-    lightbox = { isOpen: false, title: '', style: '', symbol: '' };
+    lightbox = { isOpen: false, title: '', style: '', symbol: '', imageUrl: '' };
   }
 
   // Parse URL hash or query params on load/hashchange
@@ -100,8 +106,10 @@
 </svelte:head>
 
 <!-- NAV SHELL -->
-<Navbar {currentPage} {showPage} {toggleMobileNav} {isDarkMode} {toggleTheme} />
-<MobileNav isOpen={isMobileNavOpen} {toggleMobileNav} {showPage} />
+{#if currentPage !== 'admin'}
+  <Navbar {currentPage} {showPage} {toggleMobileNav} {isDarkMode} {toggleTheme} />
+  <MobileNav isOpen={isMobileNavOpen} {toggleMobileNav} {showPage} />
+{/if}
 
 <!-- PAGE ROUTER -->
 <main>
@@ -120,21 +128,23 @@
   {:else if currentPage === 'blog'}
     <Blog />
   {:else if currentPage === 'admin'}
-    <Admin />
+    <Admin {showPage} />
   {/if}
 </main>
 
 <!-- STICKY MOBILE CONVERSION BAR -->
-<div class="mobile-sticky-bar">
-  <a class="btn-primary-mobile" href="#booking" onclick={(e) => { e.preventDefault(); showPage('booking'); }}>Book Session</a>
-  <a class="btn-whatsapp-mobile" href="https://wa.me/2348151140526" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-</div>
+{#if currentPage !== 'admin'}
+  <div class="mobile-sticky-bar">
+    <a class="btn-primary-mobile" href="#booking" onclick={(e) => { e.preventDefault(); showPage('booking'); }}>Book Session</a>
+    <a class="btn-whatsapp-mobile" href="https://wa.me/2348151140526" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+  </div>
+{/if}
 
 <!-- FOOTER SHELL -->
 <Footer isSimplified={currentPage !== 'home'} {showPage} />
 
 <!-- LIGHTBOX MODAL -->
-<Lightbox isOpen={lightbox.isOpen} title={lightbox.title} style={lightbox.style} symbol={lightbox.symbol} {closeLightbox} />
+<Lightbox isOpen={lightbox.isOpen} title={lightbox.title} style={lightbox.style} symbol={lightbox.symbol} imageUrl={lightbox.imageUrl} {closeLightbox} />
 
 <style>
   main {
