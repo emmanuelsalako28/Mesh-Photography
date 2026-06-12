@@ -1,5 +1,5 @@
 <script>
-  let { showPage, openLightbox } = $props();
+  let { showPage, openLightbox, activeCategory = $bindable('all') } = $props();
 
   /**
    * @param {MouseEvent} e
@@ -25,8 +25,6 @@
     card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
     card.style.boxShadow = 'none';
   }
-
-  let activeCategory = $state('all');
 
   const items = [
     { id: 1, pcat: 'portraits', title: 'Portrait – Personal Branding', class: 'ph-portrait', art: '◆', pt: '130%' },

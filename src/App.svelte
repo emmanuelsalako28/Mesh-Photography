@@ -12,9 +12,11 @@
   import About from './lib/pages/About.svelte';
   import Booking from './lib/pages/Booking.svelte';
   import Contact from './lib/pages/Contact.svelte';
+  import Blog from './lib/pages/Blog.svelte';
 
   // Routing and UI State
   let currentPage = $state('home');
+  let portfolioCategory = $state('all');
   let isMobileNavOpen = $state(false);
   let lightbox = $state({ isOpen: false, title: '', style: '', symbol: '' });
   let isDarkMode = $state(false);
@@ -35,15 +37,20 @@
     services: 'SERVICES & PRICING - Meshach Olajide Photography',
     about: 'ABOUT - Meshach Olajide Photography',
     booking: 'BOOK A SESSION - Meshach Olajide Photography',
-    contact: 'CONTACT & BOOKINGS - Meshach Olajide Photography'
+    contact: 'CONTACT & BOOKINGS - Meshach Olajide Photography',
+    blog: 'THE JOURNAL - Meshach Olajide Photography'
   };
 
   // Helper functions
   /**
    * @param {string} page
+   * @param {string} [category]
    */
-  function showPage(page) {
+  function showPage(page, category = 'all') {
     currentPage = page;
+    if (page === 'portfolio') {
+      portfolioCategory = category;
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -78,7 +85,7 @@
   {#if currentPage === 'home'}
     <Home {showPage} {openLightbox} />
   {:else if currentPage === 'portfolio'}
-    <Portfolio {showPage} {openLightbox} />
+    <Portfolio {showPage} {openLightbox} bind:activeCategory={portfolioCategory} />
   {:else if currentPage === 'services'}
     <Services {showPage} />
   {:else if currentPage === 'about'}
@@ -87,6 +94,8 @@
     <Booking />
   {:else if currentPage === 'contact'}
     <Contact />
+  {:else if currentPage === 'blog'}
+    <Blog />
   {/if}
 </main>
 

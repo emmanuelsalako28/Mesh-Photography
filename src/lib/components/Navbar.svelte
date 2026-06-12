@@ -9,13 +9,45 @@
   <a class="nav-logo" href="#home" onclick={(e) => { e.preventDefault(); showPage('home'); }}>
     Meshach Olajide
   </a>
-  
-  <div class="nav-links">
-    <a href="#portfolio" class:active={currentPage === 'portfolio'} onclick={(e) => { e.preventDefault(); showPage('portfolio'); }}>portfolio</a>
-    <a href="#services" class:active={currentPage === 'services'} onclick={(e) => { e.preventDefault(); showPage('services'); }}>services</a>
+    <div class="nav-links">
+    <a href="#home" class:active={currentPage === 'home'} onclick={(e) => { e.preventDefault(); showPage('home'); }}>home</a>
     <a href="#about" class:active={currentPage === 'about'} onclick={(e) => { e.preventDefault(); showPage('about'); }}>about</a>
-    <a href="#contact" class:active={currentPage === 'contact'} onclick={(e) => { e.preventDefault(); showPage('contact'); }}>contact</a>
-    <a href="#booking" class="nav-cta" class:active={currentPage === 'booking'} onclick={(e) => { e.preventDefault(); showPage('booking'); }}>book session</a>
+    
+    <div class="nav-item-dropdown">
+      <a href="#portfolio" class:active={currentPage === 'portfolio'} onclick={(e) => { e.preventDefault(); showPage('portfolio', 'all'); }}>
+        pictures <span class="chevron">˅</span>
+      </a>
+      <div class="nav-dropdown-content">
+        <a href="#portfolio-portraits" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'portraits'); }}>Portraits</a>
+        <a href="#portfolio-events" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'events'); }}>Events</a>
+        <a href="#portfolio-family" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'family'); }}>Family</a>
+        <a href="#portfolio-corporate" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'corporate'); }}>Corporate</a>
+        <a href="#portfolio-fashion" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'fashion'); }}>Fashion</a>
+        <a href="#portfolio-all" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'all'); }}>All Pictures</a>
+      </div>
+    </div>
+    
+    <div class="nav-item-dropdown">
+      <a href="#portfolio" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'videos'); }}>
+        videos <span class="chevron">˅</span>
+      </a>
+      <div class="nav-dropdown-content">
+        <a href="#portfolio-videos" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'videos'); }}>Video Showreel</a>
+        <a href="#portfolio-all" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'all'); }}>All Videos</a>
+      </div>
+    </div>
+    
+    <a href="#blog" class:active={currentPage === 'blog'} onclick={(e) => { e.preventDefault(); showPage('blog'); }}>blog</a>
+    
+    <div class="nav-item-dropdown">
+      <a href="#contact" class:active={currentPage === 'contact' || currentPage === 'booking'} onclick={(e) => { e.preventDefault(); showPage('contact'); }}>
+        contact & bookings <span class="chevron">˅</span>
+      </a>
+      <div class="nav-dropdown-content">
+        <a href="#contact" onclick={(e) => { e.preventDefault(); showPage('contact'); }}>Get In Touch</a>
+        <a href="#booking" onclick={(e) => { e.preventDefault(); showPage('booking'); }}>Book a Session</a>
+      </div>
+    </div>
   </div>
 
   <div class="nav-actions" style="display: flex; align-items: center; gap: 1.5rem;">
