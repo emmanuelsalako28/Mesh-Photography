@@ -25,6 +25,7 @@
   --serif: 'Playfair Display', Georgia, serif;
   --sans: 'Inter', sans-serif;
   --card-glow-bg: rgba(0, 0, 0, 0.02);
+  --nav-bg: rgba(250, 248, 245, 0.82);
 }
 
 :root.dark-mode {
@@ -38,6 +39,7 @@
   --muted: #A1A1AA;
   --border: rgba(255, 255, 255, 0.08);
   --card-glow-bg: rgba(255, 255, 255, 0.04);
+  --nav-bg: rgba(11, 11, 11, 0.82);
 }
 
 html {
@@ -140,12 +142,16 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: padding 0.4s, background 0.4s, border-color 0.4s;
-  background: var(--ink);
-  border-bottom: 1px solid var(--border);
+  transition: padding 0.4s, background 0.4s, border-color 0.4s, box-shadow 0.4s;
+  background: transparent;
+  border-bottom: 1px solid transparent;
 }
 nav.scrolled {
   padding: 1.1rem 3rem;
+  background: var(--nav-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
   box-shadow: 0 4px 25px rgba(0, 0, 0, 0.02);
 }
 .nav-logo {
