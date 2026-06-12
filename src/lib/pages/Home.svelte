@@ -40,22 +40,46 @@
   });
 
   const photos = [
-    { id: 1, cat: 'portraits', label: 'Portraits', class: 'ph-portrait', art: '◆' },
-    { id: 2, cat: 'events', label: 'Events', class: 'ph-event', art: '◈' },
-    { id: 3, cat: 'corporate', label: 'Corporate', class: 'ph-corporate', art: '◇' },
-    { id: 4, cat: 'family', label: 'Family', class: 'ph-family', art: '❋' },
-    { id: 5, cat: 'portraits', label: 'Weddings', class: 'ph-wedding', art: '♦' },
-    { id: 6, cat: 'events', label: 'Fashion', class: 'ph-fashion', art: '✦' }
+    { id: 1, cat: 'family', label: 'Classic Wedding Portrait', class: 'ph-wedding', art: '♦' },
+    { id: 2, cat: 'family', label: 'Warm Couple Portrait', class: 'ph-portrait', art: '◆' },
+    { id: 3, cat: 'portraits', label: 'Casual Studio Portrait', class: 'ph-portrait', art: '◆' },
+    { id: 4, cat: 'portraits', label: 'Embroidered Kaftan Portrait', class: 'ph-fashion', art: '✦' },
+    { id: 5, cat: 'corporate', label: 'Professional Executive Portrait', class: 'ph-corporate', art: '◇' },
+    { id: 6, cat: 'family', label: 'Toddler Milestone Portrait', class: 'ph-family', art: '❋' },
+    { id: 7, cat: 'corporate', label: 'Editorial Fashion Portrait', class: 'ph-corporate', art: '◇' },
+    { id: 8, cat: 'portraits', label: 'Turtleneck Studio Portrait', class: 'ph-portrait', art: '◆' },
+    
+    { id: 9, cat: 'family', label: 'Maroon Traditional Portrait', class: 'ph-family', art: '❋' },
+    { id: 10, cat: 'portraits', label: 'Black Shirt Studio Portrait', class: 'ph-portrait', art: '◆' },
+    { id: 11, cat: 'corporate', label: 'Executive Branding Portrait', class: 'ph-corporate', art: '◇' },
+    { id: 12, cat: 'events', label: 'Checked Blazer Studio Portrait', class: 'ph-event', art: '◈' },
+    { id: 13, cat: 'portraits', label: 'Lace Dress Studio Portrait', class: 'ph-fashion', art: '✦' },
+    { id: 14, cat: 'events', label: 'Red Blazer Branding Portrait', class: 'ph-event', art: '◈' },
+    { id: 15, cat: 'family', label: 'Traditional Attire Studio Portrait', class: 'ph-wedding', art: '♦' },
+    { id: 16, cat: 'family', label: 'Traditional Cap Studio Portrait', class: 'ph-family', art: '❋' }
   ];
 
-  const clients = [
-    'Pepsi', 'Google', 'Netflix', 'Paystack', 'BUA Group',
-    'BetBonanza', 'Curacel', 'Micdee', 'TalentQL', 'Thrive Agric'
+  const testimonials = [
+    {
+      quote: "The team at Mesh-Photography is exceptionally professional. Even when we arrived unprepared for our shoot, they guided us through poses and made us feel at ease. The final portraits are absolute masterpieces.",
+      author: "Damilola Benson",
+      role: "Corporate Branding Client"
+    },
+    {
+      quote: "Meshach documented our wedding day with so much grace. The lighting and candid moments caught on camera are truly timeless. Looking back at the images makes us feel the exact same love.",
+      author: "Sarah & Tunde",
+      role: "Wedding Session"
+    },
+    {
+      quote: "I had a personal branding session at the studio. They are true visual storytellers who know how to capture confidence. I struggled to select my favorites because all the images were so lovely!",
+      author: "Victoria Alao",
+      role: "Creative Director"
+    }
   ];
 
   let filteredPhotos = $derived(
     activeFilter === 'all'
-      ? photos.slice(0, 5) // Use top 5 to preserve the photo-grid masonry shape layout
+      ? photos
       : photos.filter(p => p.cat === activeFilter)
   );
 
@@ -113,8 +137,8 @@
   </div>
 
   <!-- SELECTED WORK -->
-  <section class="section" style="background:transparent; position:relative; z-index:10; border-top: 1px solid var(--border);">
-    <div style="max-width:1200px;margin:0 auto">
+  <section class="section" style="background:transparent; position:relative; z-index:10; border-top: 1px solid var(--border); padding: 6rem 0 0 0;">
+    <div style="max-width:1200px;margin:0 auto; padding: 0 3rem;">
       <div class="section-header reveal">
         <div>
           <span class="section-label">Selected work</span>
@@ -132,20 +156,22 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="photo-grid reveal">
-        {#each filteredPhotos as photo (photo.id)}
-          <div class="photo-card card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} onclick={() => openLightbox(photo.label)} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && openLightbox(photo.label)}>
-            <div class="photo-placeholder {photo.class} card-3d-inner">
-              <div class="photo-art">{photo.art}</div>
-            </div>
-            <div class="photo-overlay"></div>
-            <div class="photo-label">{photo.label}</div>
+    <div class="photo-grid reveal" style="width: 100%; margin-top: 3rem; gap: 0;">
+      {#each filteredPhotos as photo (photo.id)}
+        <div class="photo-card card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} onclick={() => openLightbox(photo.label, photo.class, photo.art)} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && openLightbox(photo.label, photo.class, photo.art)}>
+          <div class="photo-placeholder {photo.class} card-3d-inner">
+            <div class="photo-art">{photo.art}</div>
           </div>
-        {/each}
-      </div>
+          <div class="photo-overlay"></div>
+          <div class="photo-label">{photo.label}</div>
+        </div>
+      {/each}
+    </div>
 
-      <div style="text-align:center;margin-top:4rem" class="reveal">
+    <div style="max-width:1200px;margin:0 auto; padding: 4rem 3rem;">
+      <div style="text-align:center" class="reveal">
         <button class="view-all" onclick={() => showPage('portfolio')} style="background:none; border:none; font-family:var(--sans)">
           view full portfolio →
         </button>
@@ -190,20 +216,30 @@
     </div>
   </section>
 
-  <!-- CORPORATE PARTNERS -->
+  <!-- TESTIMONIALS -->
   <section class="section" style="border-top: 1px solid var(--border);">
     <div style="max-width: 1200px; margin: 0 auto;">
       <div class="section-header reveal">
         <div>
-          <span class="section-label">collaborations</span>
-          <h2 class="section-title" style="font-family: var(--serif); font-style: italic; font-weight: 300;">our awesome clients</h2>
+          <span class="section-label">kind words</span>
+          <h2 class="section-title" style="font-family: var(--serif); font-style: italic; font-weight: 300;">testimonials</h2>
         </div>
-        <p class="section-sub">We have had the privilege to document events, campaigns, and profiles for trusted brands.</p>
+        <p class="section-sub">Read what our clients say about their sessions and final visual stories.</p>
       </div>
       
-      <div class="clients-grid reveal">
-        {#each clients as client}
-          <div class="client-logo-item">{client}</div>
+      <div class="testimonials-grid reveal">
+        {#each testimonials as item}
+          <div class="testimonial-card card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} role="presentation">
+            <div class="card-3d-inner">
+              <span class="quote-icon">“</span>
+              <div class="testimonial-stars">★★★★★</div>
+              <p class="testimonial-quote">“{item.quote}”</p>
+              <div class="testimonial-meta">
+                <h4 class="testimonial-author">{item.author}</h4>
+                <span class="testimonial-role">{item.role}</span>
+              </div>
+            </div>
+          </div>
         {/each}
       </div>
     </div>

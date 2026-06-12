@@ -1,5 +1,5 @@
 <script>
-  let { currentPage = 'home', showPage, toggleMobileNav, isLightMode = false, toggleTheme } = $props();
+  let { currentPage = 'home', showPage, toggleMobileNav, isDarkMode = false, toggleTheme } = $props();
   let y = $state(0);
 </script>
 
@@ -20,10 +20,10 @@
 
   <div class="nav-actions" style="display: flex; align-items: center; gap: 1.5rem;">
     <button class="theme-toggle-btn" onclick={toggleTheme} aria-label="Toggle Theme Mode">
-      {#if isLightMode}
-        <span style="font-size: 1.2rem;">🌙</span>
-      {:else}
+      {#if isDarkMode}
         <span style="font-size: 1.2rem;">☀️</span>
+      {:else}
+        <span style="font-size: 1.2rem;">🌙</span>
       {/if}
     </button>
     <button class="hamburger" onclick={toggleMobileNav} aria-label="Toggle Navigation Menu">

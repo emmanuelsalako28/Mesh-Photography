@@ -16,15 +16,15 @@
   // Routing and UI State
   let currentPage = $state('home');
   let isMobileNavOpen = $state(false);
-  let lightbox = $state({ isOpen: false, title: '' });
-  let isLightMode = $state(false);
+  let lightbox = $state({ isOpen: false, title: '', style: '', symbol: '' });
+  let isDarkMode = $state(false);
 
   function toggleTheme() {
-    isLightMode = !isLightMode;
-    if (isLightMode) {
-      document.documentElement.classList.add('light-mode');
+    isDarkMode = !isDarkMode;
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark-mode');
     } else {
-      document.documentElement.classList.remove('light-mode');
+      document.documentElement.classList.remove('dark-mode');
     }
   }
 
@@ -53,13 +53,15 @@
 
   /**
    * @param {string} title
+   * @param {string} style
+   * @param {string} symbol
    */
-  function openLightbox(title) {
-    lightbox = { isOpen: true, title };
+  function openLightbox(title, style = '', symbol = '') {
+    lightbox = { isOpen: true, title, style, symbol };
   }
 
   function closeLightbox() {
-    lightbox = { isOpen: false, title: '' };
+    lightbox = { isOpen: false, title: '', style: '', symbol: '' };
   }
 </script>
 
@@ -68,7 +70,7 @@
 </svelte:head>
 
 <!-- NAV SHELL -->
-<Navbar {currentPage} {showPage} {toggleMobileNav} {isLightMode} {toggleTheme} />
+<Navbar {currentPage} {showPage} {toggleMobileNav} {isDarkMode} {toggleTheme} />
 <MobileNav isOpen={isMobileNavOpen} {toggleMobileNav} {showPage} />
 
 <!-- PAGE ROUTER -->
@@ -92,7 +94,7 @@
 <Footer isSimplified={currentPage !== 'home'} {showPage} />
 
 <!-- LIGHTBOX MODAL -->
-<Lightbox isOpen={lightbox.isOpen} title={lightbox.title} {closeLightbox} />
+<Lightbox isOpen={lightbox.isOpen} title={lightbox.title} style={lightbox.style} symbol={lightbox.symbol} {closeLightbox} />
 
 <style>
   main {
