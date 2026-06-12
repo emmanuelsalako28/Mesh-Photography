@@ -74,7 +74,7 @@
           <div class="ci-icon">📞</div>
           <div>
             <span class="ci-label">Phone</span>
-            <span class="ci-value">+234 815 114 0526</span>
+            <span class="ci-value">+234 813 824 5455</span>
           </div>
         </div>
         
@@ -90,7 +90,7 @@
           <div class="ci-icon">WA</div>
           <div>
             <span class="ci-label">WhatsApp</span>
-            <span class="ci-value">+234 815 114 0526</span>
+            <span class="ci-value">+234 813 824 5455</span>
           </div>
         </div>
         
