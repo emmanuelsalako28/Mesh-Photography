@@ -18,21 +18,23 @@
   let profile = $state({ ...defaultProfile });
 
   onMount(async () => {
-    if (supabase) {
-      try {
-        const { data, error } = await supabase
-          .from('about_profile')
-          .select('*')
-          .eq('id', 1)
-          .single();
-        
-        if (error) throw error;
-        if (data) {
-          profile = data;
-        }
-      } catch (err) {
-        console.warn('Could not load profile from Supabase, using defaults:', err);
+    if (!supabase) return;
+
+    try {
+      const { data, error } = await supabase
+        .from('about_profile')
+        .select('*')
+        .eq('id', 1)
+        .maybeSingle(); // ← fixed: won't throw 406 if row is missing
+
+      if (error) throw error;
+
+      if (data) {
+        profile = data;
       }
+      // if data is null, defaultProfile stays in place — no error
+    } catch (err) {
+      console.warn('Could not load profile from Supabase, using defaults:', err);
     }
   });
 </script>
