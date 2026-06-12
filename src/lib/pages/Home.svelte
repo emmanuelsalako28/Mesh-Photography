@@ -30,12 +30,29 @@
 
   let activeFilter = $state('all');
   let activeSlide = $state(0);
+  let activeTestimonial = $state(0);
 
   // Auto-playing hero slider
   $effect(() => {
     const timer = setInterval(() => {
       activeSlide = (activeSlide + 1) % 2;
     }, 5500);
+    return () => clearInterval(timer);
+  });
+
+  function nextTestimonial() {
+    activeTestimonial = (activeTestimonial + 1) % 3;
+  }
+
+  function prevTestimonial() {
+    activeTestimonial = (activeTestimonial - 1 + 3) % 3;
+  }
+
+  // Auto-playing testimonials slider
+  $effect(() => {
+    const timer = setInterval(() => {
+      nextTestimonial();
+    }, 7000);
     return () => clearInterval(timer);
   });
 
@@ -63,17 +80,26 @@
     {
       quote: "The team at Mesh-Photography is exceptionally professional. Even when we arrived unprepared for our shoot, they guided us through poses and made us feel at ease. The final portraits are absolute masterpieces.",
       author: "Damilola Benson",
-      role: "Corporate Branding Client"
+      role: "Corporate Branding Client",
+      org: "Benson Holdings",
+      portraitClass: "ph-portrait",
+      portraitArt: "◆"
     },
     {
       quote: "Meshach documented our wedding day with so much grace. The lighting and candid moments caught on camera are truly timeless. Looking back at the images makes us feel the exact same love.",
       author: "Sarah & Tunde",
-      role: "Wedding Session"
+      role: "Wedding Session",
+      org: "Private Clients",
+      portraitClass: "ph-wedding",
+      portraitArt: "♦"
     },
     {
       quote: "I had a personal branding session at the studio. They are true visual storytellers who know how to capture confidence. I struggled to select my favorites because all the images were so lovely!",
       author: "Victoria Alao",
-      role: "Creative Director"
+      role: "Creative Director",
+      org: "Alao Agency",
+      portraitClass: "ph-fashion",
+      portraitArt: "✦"
     }
   ];
 
@@ -107,11 +133,11 @@
     <!-- Slide 1 -->
     <div class="hero-slide" class:active={activeSlide === 0} style="--hero-img: url('/hero1.png');">
       <div class="hero-content">
-        <span class="hero-eyebrow">Award-winning photography studio</span>
-        <h1 class="hero-title">Create Timeless<br><em>Works of Art</em></h1>
-        <p class="hero-sub">Tallinn, Estonia</p>
+        <span class="hero-eyebrow">Lens & Light Studio</span>
+        <h1 class="hero-title">Capturing Timeless<br><em>Stories</em></h1>
+        <p class="hero-sub" style="letter-spacing: 0.15em;">We create elegant portraits, personal branding imagery, and unforgettable visual stories.</p>
         <div class="hero-btns">
-          <button class="btn-primary" onclick={() => showPage('booking')}>Book a Session</button>
+          <button class="btn-primary" onclick={() => showPage('booking')}>Book Session</button>
           <button class="btn-outline" onclick={() => showPage('portfolio')}>View Portfolio</button>
         </div>
       </div>
@@ -120,11 +146,11 @@
     <!-- Slide 2 -->
     <div class="hero-slide" class:active={activeSlide === 1} style="--hero-img: url('/hero2.jpg');">
       <div class="hero-content">
-        <span class="hero-eyebrow">Visual Storytellers</span>
-        <h1 class="hero-title">Tell Visually Appealing<br><em>Stories</em></h1>
-        <p class="hero-sub">Vana-Viru & Mustamäe Studios, Tallinn</p>
+        <span class="hero-eyebrow">Creative Direction</span>
+        <h1 class="hero-title">Fine Art &<br><em>Editorial Visuals</em></h1>
+        <p class="hero-sub" style="letter-spacing: 0.15em;">Polished branding, executive headshots, and editorial collections tailored to your brand.</p>
         <div class="hero-btns">
-          <button class="btn-primary" onclick={() => showPage('booking')}>Book a Session</button>
+          <button class="btn-primary" onclick={() => showPage('booking')}>Book Session</button>
           <button class="btn-outline" onclick={() => showPage('portfolio')}>View Portfolio</button>
         </div>
       </div>
@@ -196,6 +222,7 @@
             <span class="service-icon">◆</span>
             <h3 class="service-name">Portraiture</h3>
             <p style="color:var(--muted);font-size:0.85rem;line-height:1.7">Portraits include Personal branding, Birthdays, Friendships, and Milestone portraits. Crafted to inspire confidence and celebrate visual identity.</p>
+            <span class="service-learn-more" style="color:var(--gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; display:inline-block; margin-top:1.5rem; font-weight:600;">Learn More →</span>
           </div>
         </div>
         <div class="service-card card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} onclick={() => showPage('services')} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && showPage('services')}>
@@ -203,6 +230,7 @@
             <span class="service-icon">❋</span>
             <h3 class="service-name">Family Sessions</h3>
             <p style="color:var(--muted);font-size:0.85rem;line-height:1.7">Looking to take a picture with the whole clan? This session is perfect for you. At Meshach Olajide Photography, we understand the importance of telling a story through family portraits.</p>
+            <span class="service-learn-more" style="color:var(--gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; display:inline-block; margin-top:1.5rem; font-weight:600;">Learn More →</span>
           </div>
         </div>
         <div class="service-card card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} onclick={() => showPage('services')} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && showPage('services')}>
@@ -210,6 +238,7 @@
             <span class="service-icon">♦</span>
             <h3 class="service-name">Weddings</h3>
             <p style="color:var(--muted);font-size:0.85rem;line-height:1.7">One of the most important days to have best-kept memories. Let us document timeless images that keep you reminiscing and feeling the same love whenever you look back.</p>
+            <span class="service-learn-more" style="color:var(--gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; display:inline-block; margin-top:1.5rem; font-weight:600;">Learn More →</span>
           </div>
         </div>
       </div>
@@ -218,7 +247,7 @@
 
   <!-- TESTIMONIALS -->
   <section class="section" style="border-top: 1px solid var(--border);">
-    <div style="max-width: 1200px; margin: 0 auto;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 3rem;">
       <div class="section-header reveal">
         <div>
           <span class="section-label">kind words</span>
@@ -227,21 +256,75 @@
         <p class="section-sub">Read what our clients say about their sessions and final visual stories.</p>
       </div>
       
-      <div class="testimonials-grid reveal">
-        {#each testimonials as item}
-          <div class="testimonial-card card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} role="presentation">
-            <div class="card-3d-inner">
-              <span class="quote-icon">“</span>
+      <div class="testimonials-slider reveal">
+        {#key activeTestimonial}
+          <div class="testimonial-slide-layout">
+            <div class="testimonial-slide-left">
+              <div class="testimonial-portrait-frame {testimonials[activeTestimonial].portraitClass}">
+                <span class="testimonial-portrait-art">{testimonials[activeTestimonial].portraitArt}</span>
+              </div>
+            </div>
+            <div class="testimonial-slide-right">
+              <span class="testimonial-slide-quote-icon">“</span>
               <div class="testimonial-stars">★★★★★</div>
-              <p class="testimonial-quote">“{item.quote}”</p>
+              <p class="testimonial-slide-quote">“{testimonials[activeTestimonial].quote}”</p>
               <div class="testimonial-meta">
-                <h4 class="testimonial-author">{item.author}</h4>
-                <span class="testimonial-role">{item.role}</span>
+                <h3 class="testimonial-slide-author">{testimonials[activeTestimonial].author}</h3>
+                <p class="testimonial-slide-title">
+                  {testimonials[activeTestimonial].role} <span style="color:var(--gold)">/</span> {testimonials[activeTestimonial].org}
+                </p>
               </div>
             </div>
           </div>
-        {/each}
+        {/key}
+
+        <div class="testimonial-controls">
+          <button class="testimonial-control-btn" onclick={prevTestimonial} aria-label="Previous Testimonial">
+            <span>←</span>
+          </button>
+          
+          <div class="testimonial-indicators">
+            {#each testimonials as _, idx}
+              <button 
+                class="testimonial-dot" 
+                class:active={idx === activeTestimonial} 
+                onclick={() => activeTestimonial = idx} 
+                aria-label="Go to testimonial {idx + 1}"
+              ></button>
+            {/each}
+          </div>
+
+          <button class="testimonial-control-btn" onclick={nextTestimonial} aria-label="Next Testimonial">
+            <span>→</span>
+          </button>
+        </div>
+        
+        <div class="testimonial-progress-container">
+          {#key activeTestimonial}
+            <div class="testimonial-progress-bar"></div>
+          {/key}
+        </div>
       </div>
+    </div>
+  </section>
+
+  <!-- INSTAGRAM / SOCIAL PROOF -->
+  <section class="section" style="border-top: 1px solid var(--border);">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 3rem; text-align: center;">
+      <span class="section-label">social proof</span>
+      <h2 style="font-family: var(--serif); font-style: italic; font-weight: 300; margin-bottom: 1rem;">follow our journey</h2>
+      <p style="color:var(--muted); max-width:500px; margin: 0 auto 3rem; font-size:0.9rem;">
+        Get a daily dose of visual inspiration and behind-the-scenes stories on Instagram.
+      </p>
+      
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; margin-bottom:3rem;">
+        <div style="background:linear-gradient(145deg,#1e1508,#0c0c0c); aspect-ratio:1/1; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:3rem; color:rgba(201,167,78,0.08);" class="social-hover">◆</div>
+        <div style="background:linear-gradient(145deg,#15201a,#0d1810); aspect-ratio:1/1; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:3rem; color:rgba(201,167,78,0.08);" class="social-hover">◈</div>
+        <div style="background:linear-gradient(145deg,#151520,#0c0c18); aspect-ratio:1/1; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:3rem; color:rgba(201,167,78,0.08);" class="social-hover">◇</div>
+        <div style="background:linear-gradient(145deg,#201518,#180d10); aspect-ratio:1/1; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:3rem; color:rgba(201,167,78,0.08);" class="social-hover">❋</div>
+      </div>
+      
+      <a class="btn-outline" href="https://instagram.com/meshacholajidephotography" target="_blank" rel="noopener noreferrer">@meshacholajidephotography</a>
     </div>
   </section>
 

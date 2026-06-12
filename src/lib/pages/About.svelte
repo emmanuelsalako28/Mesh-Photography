@@ -23,10 +23,18 @@
 
     <!-- Stats -->
     <div class="stat-row">
-      <div class="stat-item"><span class="stat-num">500+</span><span class="stat-label">galleries delivered</span></div>
-      <div class="stat-item"><span class="stat-num">8+</span><span class="stat-label">years of experience</span></div>
-      <div class="stat-item"><span class="stat-num">98%</span><span class="stat-label">resolved clarity</span></div>
-      <div class="stat-item"><span class="stat-num">200+</span><span class="stat-label">corporate clients</span></div>
+      <div class="stat-item"><span class="stat-num">500+</span><span class="stat-label">Sessions Delivered</span></div>
+      <div class="stat-item"><span class="stat-num">100+</span><span class="stat-label">Happy Clients</span></div>
+      <div class="stat-item"><span class="stat-num">5+</span><span class="stat-label">Years Experience</span></div>
+      <div class="stat-item"><span class="stat-num">24hr</span><span class="stat-label">Response Time</span></div>
+    </div>
+
+    <!-- Philosophy Brand Story -->
+    <div style="text-align:center; max-width:800px; margin: 5rem auto 7rem; padding: 0 1.5rem;">
+      <h3 style="font-family:var(--serif); font-size:1.8rem; color:var(--gold); margin-bottom:1.5rem; font-style:italic; font-weight: 300;">Our Philosophy</h3>
+      <p style="color:var(--muted); font-size:1rem; line-height:1.9;">
+        Every click of the shutter is a commitment to excellence. We don't just take photographs; we craft visual legacies. By blending editorial art direction with client comfort, we ensure that every session is not just a service, but a memorable creative experience that yields timeless imagery.
+      </p>
     </div>
 
     <!-- Photography Style -->

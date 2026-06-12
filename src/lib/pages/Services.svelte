@@ -38,7 +38,7 @@
     <div class="pricing-grid reveal">
       <div class="pricing-card card-3d" role="presentation" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D}>
         <div class="card-3d-inner">
-          <h3 class="pricing-name">Mini Session</h3>
+          <h3 class="pricing-name">Starter Session</h3>
           <div class="pricing-price">₦50,000</div>
           <p style="color:var(--muted);font-size:0.8rem;margin-bottom:1rem">A focused, quick capture session suitable for milestones, simple headshots, or quick profile updates.</p>
           <ul class="pricing-list">
@@ -48,14 +48,15 @@
             <li>Online gallery access</li>
             <li>7-day delivery</li>
           </ul>
-          <button class="btn-primary" onclick={() => showPage('booking')} style="width: 100%;">Book Mini</button>
+          <button class="btn-primary" onclick={() => showPage('booking')} style="width: 100%;">Select Starter</button>
+          <a href="#contact" onclick={(e) => { e.preventDefault(); showPage('contact'); }} style="display:block; text-align:center; color:var(--gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; margin-top:1rem; font-weight:600; text-decoration:none;">Inquire For Details →</a>
         </div>
       </div>
 
       <div class="pricing-card featured card-3d" role="presentation" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D}>
         <div class="card-3d-inner">
-          <span class="pricing-badge">Recommended</span>
-          <h3 class="pricing-name">Standard Session</h3>
+          <span class="pricing-badge">Signature</span>
+          <h3 class="pricing-name">Signature Session</h3>
           <div class="pricing-price">₦100,000</div>
           <p style="color:var(--muted);font-size:0.8rem;margin-bottom:1rem">The standard photography session. Allows full creative styling, posture direction, and choice of studio or outdoor spaces.</p>
           <ul class="pricing-list">
@@ -66,13 +67,14 @@
             <li>Online gallery access</li>
             <li>5-day delivery</li>
           </ul>
-          <button class="btn-primary" onclick={() => showPage('booking')} style="width: 100%;">Book Standard</button>
+          <button class="btn-primary" onclick={() => showPage('booking')} style="width: 100%;">Select Signature</button>
+          <a href="#contact" onclick={(e) => { e.preventDefault(); showPage('contact'); }} style="display:block; text-align:center; color:var(--gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; margin-top:1rem; font-weight:600; text-decoration:none;">Inquire For Details →</a>
         </div>
       </div>
 
       <div class="pricing-card card-3d" role="presentation" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D}>
         <div class="card-3d-inner">
-          <h3 class="pricing-name">Premium Session</h3>
+          <h3 class="pricing-name">Premium Experience</h3>
           <div class="pricing-price">₦200,000</div>
           <p style="color:var(--muted);font-size:0.8rem;margin-bottom:1rem">An exhaustive, multi-set production session. Includes comprehensive direction, makeup artist coordination, and USB archiving.</p>
           <ul class="pricing-list">
@@ -84,7 +86,8 @@
             <li>Online gallery + USB delivery</li>
             <li>Priority 3-day delivery</li>
           </ul>
-          <button class="btn-primary" onclick={() => showPage('booking')} style="width: 100%;">Book Premium</button>
+          <button class="btn-primary" onclick={() => showPage('booking')} style="width: 100%;">Select Experience</button>
+          <a href="#contact" onclick={(e) => { e.preventDefault(); showPage('contact'); }} style="display:block; text-align:center; color:var(--gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; margin-top:1rem; font-weight:600; text-decoration:none;">Inquire For Details →</a>
         </div>
       </div>
     </div>

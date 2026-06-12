@@ -90,6 +90,12 @@
   {/if}
 </main>
 
+<!-- STICKY MOBILE CONVERSION BAR -->
+<div class="mobile-sticky-bar">
+  <a class="btn-primary-mobile" href="#booking" onclick={(e) => { e.preventDefault(); showPage('booking'); }}>Book Session</a>
+  <a class="btn-whatsapp-mobile" href="https://wa.me/2348151140526" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+</div>
+
 <!-- FOOTER SHELL -->
 <Footer isSimplified={currentPage !== 'home'} {showPage} />
 
