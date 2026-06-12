@@ -6,18 +6,55 @@
     message: ''
   });
 
+  let isSubmitting = $state(false);
+  let submitStatus = $state({ type: '', message: '' });
+
   /**
    * @param {SubmitEvent} e
    */
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    alert("Message sent! We'll respond within 24 hours.");
-    contactData = {
-      name: '',
-      email: '',
-      subject: 'General Inquiry',
-      message: ''
-    };
+    isSubmitting = true;
+    submitStatus = { type: '', message: '' };
+
+    try {
+      const response = await fetch('http://localhost:5000/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(contactData)
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        submitStatus = {
+          type: 'success',
+          message: "Message sent! We'll respond within 24 hours."
+        };
+        // Reset form
+        contactData = {
+          name: '',
+          email: '',
+          subject: 'General Inquiry',
+          message: ''
+        };
+      } else {
+        submitStatus = {
+          type: 'error',
+          message: result.message || 'Something went wrong. Please try again.'
+        };
+      }
+    } catch (error) {
+      console.error('Contact submission error:', error);
+      submitStatus = {
+        type: 'error',
+        message: 'Could not connect to the server. Please check your network or try again later.'
+      };
+    } finally {
+      isSubmitting = false;
+    }
   }
 </script>
 
@@ -115,8 +152,15 @@
             <label for="contactMessage">Message</label>
             <textarea id="contactMessage" style="height:160px" bind:value={contactData.message} placeholder="Write your message here..." required></textarea>
           </div>
+          {#if submitStatus.message}
+            <div class="form-status {submitStatus.type}" style="padding:1rem; margin-bottom:1.5rem; text-align:center; font-size:0.85rem; border:1px solid var(--border); background:rgba(201, 168, 76, 0.05); color:{submitStatus.type === 'success' ? 'var(--gold)' : '#ff6b6b'}">
+              {submitStatus.message}
+            </div>
+          {/if}
           
-          <button type="submit" class="submit-btn">Send Message</button>
+          <button type="submit" class="submit-btn" disabled={isSubmitting}>
+            {isSubmitting ? 'Sending Message...' : 'Send Message'}
+          </button>
         </form>
         <br><br>
         <div style="border:1px solid var(--border);padding:1.5rem;text-align:center">

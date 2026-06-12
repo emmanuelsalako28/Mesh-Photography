@@ -11,25 +11,60 @@
     notes: ''
   });
 
+  let isSubmitting = $state(false);
+  let submitStatus = $state({ type: '', message: '' });
+
   /**
    * @param {SubmitEvent} e
    */
-  function handleBooking(e) {
+  async function handleBooking(e) {
     e.preventDefault();
-    alert(`Booking request submitted for ${bookingData.firstName} ${bookingData.lastName}! ✓\n\nWe'll confirm your session at ${bookingData.location} within 24 hours via WhatsApp or email.`);
-    
-    // Reset form
-    bookingData = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      sessionType: '',
-      preferredDate: '',
-      preferredTime: '',
-      location: '',
-      notes: ''
-    };
+    isSubmitting = true;
+    submitStatus = { type: '', message: '' };
+
+    try {
+      const response = await fetch('http://localhost:5000/api/booking', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bookingData)
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        submitStatus = {
+          type: 'success',
+          message: `Booking request submitted successfully! We'll confirm your session at ${bookingData.location} within 24 hours.`
+        };
+        // Reset form
+        bookingData = {
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          sessionType: '',
+          preferredDate: '',
+          preferredTime: '',
+          location: '',
+          notes: ''
+        };
+      } else {
+        submitStatus = {
+          type: 'error',
+          message: result.message || 'Something went wrong. Please try again.'
+        };
+      }
+    } catch (error) {
+      console.error('Booking submission error:', error);
+      submitStatus = {
+        type: 'error',
+        message: 'Could not connect to the server. Please check your network or try again later.'
+      };
+    } finally {
+      isSubmitting = false;
+    }
   }
 </script>
 
@@ -104,7 +139,14 @@
             <label for="notes">Additional Notes</label>
             <textarea id="notes" bind:value={bookingData.notes} placeholder="Tell us about your vision, outfits planned, special requests, or anything else we should know..."></textarea>
           </div>
-          <button type="submit" class="submit-btn">Submit Booking Request</button>
+          {#if submitStatus.message}
+            <div class="form-status {submitStatus.type}" style="padding:1rem; margin-bottom:1.5rem; text-align:center; font-size:0.85rem; border:1px solid var(--border); background:rgba(201, 168, 76, 0.05); color:{submitStatus.type === 'success' ? 'var(--gold)' : '#ff6b6b'}">
+              {submitStatus.message}
+            </div>
+          {/if}
+          <button type="submit" class="submit-btn" disabled={isSubmitting}>
+            {isSubmitting ? 'Submitting Request...' : 'Submit Booking Request'}
+          </button>
           <p style="color:var(--muted);font-size:0.75rem;margin-top:1rem;text-align:center">We'll confirm your booking within 24 hours via email or WhatsApp.</p>
         </form>
       </div>
