@@ -16,7 +16,7 @@
         <h4>contact info</h4>
         <p>
           <a href="mailto:office@meshacholajide.com">office@meshacholajide.com</a> <br>
-          <a href="tel:+2348151140526">+234 815 114 0526</a>
+          <a href="tel:+2348138245455">+234 813 824 5455</a>
         </p>
         <br>
         <p style="font-size: 0.75rem;">
@@ -46,7 +46,7 @@
   <div class="footer-bottom" style={isSimplified ? 'max-width:1100px;margin:0 auto;padding:1.5rem 0 0;border-top:none;' : ''}>
     <p>COPYRIGHT © 2026 MESHACH OLAJIDE PHOTOGRAPHY. ALL RIGHTS RESERVED.</p>
     <div class="social-links">
-      <a href="https://www.instagram.com/meshacholajide/" target="_blank" rel="noopener noreferrer">IG</a>
+      <a href="https://www.instagram.com/meshacholajidephotography/" target="_blank" rel="noopener noreferrer">IG</a>
       <a href="https://twitter.com/meshacholajide" target="_blank" rel="noopener noreferrer">X</a>
       <a href="https://www.linkedin.com/in/meshacholajide" target="_blank" rel="noopener noreferrer">LN</a>
       <a href="https://www.youtube.com/@meshacholajide" target="_blank" rel="noopener noreferrer">YT</a>
