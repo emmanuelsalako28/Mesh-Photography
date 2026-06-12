@@ -32,7 +32,7 @@
   // Auto-playing hero slider
   $effect(() => {
     const timer = setInterval(() => {
-      activeSlide = (activeSlide + 1) % 3;
+      activeSlide = (activeSlide + 1) % 2;
     }, 5500);
     return () => clearInterval(timer);
   });
@@ -79,7 +79,7 @@
   <!-- HERO SLIDER -->
   <div class="hero-slider-wrap">
     <!-- Slide 1 -->
-    <div class="hero-slide" class:active={activeSlide === 0}>
+    <div class="hero-slide" class:active={activeSlide === 0} style="background-image: linear-gradient(to right, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.2) 100%), url('/hero1.png'); background-size: cover; background-position: center;">
       <div class="hero-content">
         <span class="hero-eyebrow">Award-winning photography studio</span>
         <h1 class="hero-title">Create Timeless<br><em>Works of Art</em></h1>
@@ -92,24 +92,11 @@
     </div>
 
     <!-- Slide 2 -->
-    <div class="hero-slide" class:active={activeSlide === 1}>
+    <div class="hero-slide" class:active={activeSlide === 1} style="background-image: linear-gradient(to right, rgba(0,0,0,0.85) 30%, rgba(0,0,0,0.2) 100%), url('/hero2.jpg'); background-size: cover; background-position: center;">
       <div class="hero-content">
         <span class="hero-eyebrow">Visual Storytellers</span>
         <h1 class="hero-title">Tell Visually Appealing<br><em>Stories</em></h1>
         <p class="hero-sub">Lekki & Ogudu Studios, Lagos</p>
-        <div class="hero-btns">
-          <button class="btn-primary" onclick={() => showPage('booking')}>Book a Session</button>
-          <button class="btn-outline" onclick={() => showPage('portfolio')}>View Portfolio</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Slide 3 -->
-    <div class="hero-slide" class:active={activeSlide === 2}>
-      <div class="hero-content">
-        <span class="hero-eyebrow">Celebration & Memories</span>
-        <h1 class="hero-title">Celebrate Beauty<br><em>And Love</em></h1>
-        <p class="hero-sub">Meshach Olajide Photography</p>
         <div class="hero-btns">
           <button class="btn-primary" onclick={() => showPage('booking')}>Book a Session</button>
           <button class="btn-outline" onclick={() => showPage('portfolio')}>View Portfolio</button>
