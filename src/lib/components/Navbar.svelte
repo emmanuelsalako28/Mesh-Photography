@@ -11,12 +11,12 @@
     <span class="sig-sub">PHOTOGRAPHY</span>
   </a>
     <div class="nav-links">
-    <a href="#home" class:active={currentPage === 'home'} onclick={(e) => { e.preventDefault(); showPage('home'); }}>home</a>
-    <a href="#about" class:active={currentPage === 'about'} onclick={(e) => { e.preventDefault(); showPage('about'); }}>about</a>
+    <a href="#home" class:active={currentPage === 'home'} onclick={(e) => { e.preventDefault(); showPage('home'); }}>Home</a>
+    <a href="#about" class:active={currentPage === 'about'} onclick={(e) => { e.preventDefault(); showPage('about'); }}>About</a>
     
     <div class="nav-item-dropdown">
       <a href="#portfolio" class:active={currentPage === 'portfolio'} onclick={(e) => { e.preventDefault(); showPage('portfolio', 'all'); }}>
-        pictures <span class="chevron">˅</span>
+        Pictures <span class="chevron">˅</span>
       </a>
       <div class="nav-dropdown-content">
         <a href="#portfolio-portraits" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'portraits'); }}>Portraits</a>
