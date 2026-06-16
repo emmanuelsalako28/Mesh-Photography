@@ -1210,6 +1210,23 @@ nav.scrolled {
   color: var(--gold);
 }
 
+/* ==================== CTA BANNER ==================== */
+.cta-banner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6rem 2rem;
+}
+.cta-banner .reveal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
 /* ==================== FOOTER ==================== */
 footer {
   border-top: 1px solid var(--border);
