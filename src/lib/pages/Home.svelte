@@ -107,6 +107,8 @@
   let dbPhotos = $state([]);
   /** @type {any[]} */
   let dbTestimonials = $state([]);
+  /** @type {any[]} */
+  let dbHomepageServices = $state([]);
 
   onMount(async () => {
     if (supabase) {
@@ -147,14 +149,44 @@
               org: item.org || ''
             }));
         }
+
+        const { data: hsData } = await supabase
+          .from('homepage_services')
+          .select('*')
+          .order('display_order', { ascending: true });
+        if (hsData && hsData.length > 0) {
+          dbHomepageServices = hsData;
+        }
       } catch (err) {
         console.warn('Error loading homepage data from Supabase:', err);
       }
     }
   });
 
+  const defaultHomepageServices = [
+    {
+      id: 'default-1',
+      title: "FAMILY",
+      description: "Looking to take a picture with the whole clan? This session is perfect for you. At Ijeworks, we understand the importance of telling a story through family portraits.",
+      image_url: "https://images.unsplash.com/photo-1609154767012-331529e7d73b?q=80&w=600&auto=format&fit=crop"
+    },
+    {
+      id: 'default-2',
+      title: "PORTRAIT SESSIONS",
+      description: "Portraits include Personal branding, Birthdays, Friendships, and Milestone portraits",
+      image_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop"
+    },
+    {
+      id: 'default-3',
+      title: "WEDDINGS",
+      description: "One of the most exciting yet important days to have the best-kept memories. Let Ijeworks help to document timeless images that will keep you reminiscing and feeling the same way whenever you",
+      image_url: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop"
+    }
+  ];
+
   let activePhotos = $derived(dbPhotos.length > 0 ? dbPhotos : photos);
   let activeTestimonialsList = $derived(dbTestimonials.length > 0 ? dbTestimonials : testimonials);
+  let activeHomepageServices = $derived(dbHomepageServices.length > 0 ? dbHomepageServices : defaultHomepageServices);
 
   let filteredPhotos = $derived(
     activeFilter === 'all'
@@ -256,41 +288,31 @@
   </section>
 
   <!-- SERVICES PREVIEW -->
-  <section class="section" style="border-top: 1px solid var(--border);">
-    <div style="max-width:1200px;margin:0 auto">
-      <div class="section-header reveal">
-        <div>
-          <span class="section-label">our craft</span>
-          <h2 class="section-title" style="font-family:var(--serif); font-style:italic; font-weight:300;">photography sessions</h2>
-        </div>
-        <button class="btn-outline" onclick={() => showPage('services')}>view pricing</button>
+  <section class="section" style="border-top: 1px solid var(--border); padding-top: 3.5rem; padding-bottom: 5rem;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 3rem;">
+      <div class="reveal" style="margin-bottom: 2.5rem; text-align: left;">
+        <h2 style="font-family: var(--sans); font-size: 1.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ivory); margin-bottom: 0.75rem;">
+          Our Services
+        </h2>
+        <div style="width: 60px; height: 4px; background: var(--ivory);"></div>
       </div>
       
-      <div class="services-grid reveal">
-        <div class="service-card card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} onclick={() => showPage('services')} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && showPage('services')}>
-          <div class="card-3d-inner">
-            <span class="service-icon">◆</span>
-            <h3 class="service-name">Portraiture</h3>
-            <p style="color:var(--muted);font-size:0.85rem;line-height:1.7">Portraits include Personal branding, Birthdays, Friendships, and Milestone portraits. Crafted to inspire confidence and celebrate visual identity.</p>
-            <span class="service-learn-more" style="color:var(--gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; display:inline-block; margin-top:1.5rem; font-weight:600;">Learn More →</span>
+      <div class="craft-grid reveal">
+        {#each activeHomepageServices as s (s.id)}
+          <div class="craft-card" onclick={() => showPage('services')} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && showPage('services')}>
+            <div class="craft-img-wrapper">
+              {#if s.image_url}
+                <img src={s.image_url} alt={s.title}>
+              {:else}
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-family: var(--sans); font-size: 0.9rem; color: var(--muted); background: var(--border);">
+                  No Image Available
+                </div>
+              {/if}
+            </div>
+            <h3 class="craft-title">{s.title}</h3>
+            <p class="craft-description">{s.description}</p>
           </div>
-        </div>
-        <div class="service-card card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} onclick={() => showPage('services')} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && showPage('services')}>
-          <div class="card-3d-inner">
-            <span class="service-icon">❋</span>
-            <h3 class="service-name">Family Sessions</h3>
-            <p style="color:var(--muted);font-size:0.85rem;line-height:1.7">Looking to take a picture with the whole clan? This session is perfect for you. At Meshach Olajide Photography, we understand the importance of telling a story through family portraits.</p>
-            <span class="service-learn-more" style="color:var(--gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; display:inline-block; margin-top:1.5rem; font-weight:600;">Learn More →</span>
-          </div>
-        </div>
-        <div class="service-card card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} onclick={() => showPage('services')} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && showPage('services')}>
-          <div class="card-3d-inner">
-            <span class="service-icon">♦</span>
-            <h3 class="service-name">Weddings</h3>
-            <p style="color:var(--muted);font-size:0.85rem;line-height:1.7">One of the most important days to have best-kept memories. Let us document timeless images that keep you reminiscing and feeling the same love whenever you look back.</p>
-            <span class="service-learn-more" style="color:var(--gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; display:inline-block; margin-top:1.5rem; font-weight:600;">Learn More →</span>
-          </div>
-        </div>
+        {/each}
       </div>
     </div>
   </section>
@@ -325,3 +347,63 @@
     </div>
   </section>
 </div>
+
+<style>
+  .craft-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+    margin-top: 3rem;
+  }
+  .craft-card {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+  }
+  .craft-img-wrapper {
+    aspect-ratio: 4/5;
+    overflow: hidden;
+    background: var(--border);
+    border-radius: 2px;
+    position: relative;
+  }
+  .craft-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .craft-card:hover img {
+    transform: scale(1.04);
+  }
+  .craft-title {
+    font-family: var(--sans);
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ivory);
+  }
+  .craft-description {
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0;
+  }
+  @media (max-width: 991px) {
+    .craft-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+  }
+  @media (max-width: 768px) {
+    .craft-grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
+</style>

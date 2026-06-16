@@ -89,6 +89,30 @@
   let serviceError = $state('');
   let isServiceSubmitting = $state(false);
 
+  // Homepage Services (Our Craft) State
+  /** @type {any[]} */
+  let homepageServices = $state([]);
+  let newHomepageService = $state({
+    title: '',
+    description: '',
+    image_url: '',
+    display_order: 0
+  });
+  /** @type {any} */
+  let editingHomepageServiceId = $state(null);
+  /** @type {any} */
+  let editingHomepageService = $state({
+    id: '',
+    title: '',
+    description: '',
+    image_url: '',
+    display_order: 0
+  });
+  /** @type {any} */
+  let selectedHomepageServiceImageFile = $state(null);
+  let homepageServiceError = $state('');
+  let isHomepageServiceSubmitting = $state(false);
+
   // About Biography State
   let aboutProfile = $state({
     bio_title: '',
@@ -206,6 +230,17 @@
         .order('created_at', { ascending: true });
       if (sErr) throw sErr;
       services = sData || [];
+
+      // Load homepage services
+      const { data: hsData, error: hsErr } = await supabase
+        .from('homepage_services')
+        .select('*')
+        .order('display_order', { ascending: true });
+      if (hsErr && hsErr.code !== 'PGRST116') {
+        console.warn('Failed to load homepage_services from Supabase:', hsErr);
+      } else if (hsData) {
+        homepageServices = hsData;
+      }
 
       // Load blog posts
       const { data: bpData, error: bpErr } = await supabase
@@ -625,6 +660,177 @@
       serviceError = err.message || 'Failed to add service package.';
     } finally {
       isServiceSubmitting = false;
+    }
+  }
+
+  // Add homepage service ("Our Craft") handler
+  async function addHomepageService(e) {
+    e.preventDefault();
+    homepageServiceError = '';
+    isHomepageServiceSubmitting = true;
+    try {
+      let imageUrl = '';
+      if (selectedHomepageServiceImageFile) {
+        const fileExt = selectedHomepageServiceImageFile.name.split('.').pop();
+        const fileName = `homepage_services/${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+        const { error: uploadErr } = await supabase.storage
+          .from('portfolio')
+          .upload(fileName, selectedHomepageServiceImageFile);
+        
+        if (uploadErr) {
+          throw new Error(`Image upload failed: ${uploadErr.message}`);
+        }
+        
+        const { data: urlData } = supabase.storage.from('portfolio').getPublicUrl(fileName);
+        imageUrl = urlData.publicUrl;
+      }
+
+      const payload = {
+        title: newHomepageService.title,
+        description: newHomepageService.description,
+        image_url: imageUrl || null,
+        display_order: Number(newHomepageService.display_order) || homepageServices.length
+      };
+
+      const { data, error } = await supabase
+        .from('homepage_services')
+        .insert([payload])
+        .select();
+
+      if (error) throw error;
+
+      if (data && data[0]) {
+        homepageServices = [...homepageServices, data[0]].sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+      }
+
+      // Reset form
+      newHomepageService = {
+        title: '',
+        description: '',
+        image_url: '',
+        display_order: homepageServices.length
+      };
+      selectedHomepageServiceImageFile = null;
+      const fileInput = document.getElementById('hm-service-image');
+      if (fileInput) fileInput.value = '';
+    } catch (err) {
+      homepageServiceError = err.message || 'Failed to add homepage service.';
+    } finally {
+      isHomepageServiceSubmitting = false;
+    }
+  }
+
+  // Delete homepage service handler
+  async function deleteHomepageService(id) {
+    if (!confirm('Are you sure you want to delete this homepage service?')) return;
+    try {
+      const { error } = await supabase.from('homepage_services').delete().eq('id', id);
+      if (error) throw error;
+      homepageServices = homepageServices.filter(s => s.id !== id);
+    } catch (err) {
+      alert(`Delete failed: ${err.message}`);
+    }
+  }
+
+  // Edit Homepage Service state handlers
+  function startEditHomepageService(s) {
+    editingHomepageServiceId = s.id;
+    editingHomepageService = {
+      id: s.id,
+      title: s.title || '',
+      description: s.description || '',
+      image_url: s.image_url || '',
+      display_order: s.display_order !== undefined ? s.display_order : 0
+    };
+    selectedHomepageServiceImageFile = null;
+  }
+
+  function cancelEditHomepageService() {
+    editingHomepageServiceId = null;
+    editingHomepageService = null;
+    selectedHomepageServiceImageFile = null;
+  }
+
+  async function saveEditHomepageService(e) {
+    e.preventDefault();
+    homepageServiceError = '';
+    isHomepageServiceSubmitting = true;
+    try {
+      let imageUrl = editingHomepageService.image_url;
+      if (selectedHomepageServiceImageFile) {
+        const fileExt = selectedHomepageServiceImageFile.name.split('.').pop();
+        const fileName = `homepage_services/${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+        const { error: uploadErr } = await supabase.storage
+          .from('portfolio')
+          .upload(fileName, selectedHomepageServiceImageFile);
+        
+        if (uploadErr) {
+          throw new Error(`Image upload failed: ${uploadErr.message}`);
+        }
+        
+        const { data: urlData } = supabase.storage.from('portfolio').getPublicUrl(fileName);
+        imageUrl = urlData.publicUrl;
+      }
+
+      const payload = {
+        title: editingHomepageService.title,
+        description: editingHomepageService.description,
+        image_url: imageUrl,
+        display_order: Number(editingHomepageService.display_order)
+      };
+
+      const { data, error } = await supabase
+        .from('homepage_services')
+        .update(payload)
+        .eq('id', editingHomepageService.id)
+        .select();
+
+      if (error) throw error;
+
+      if (data && data[0]) {
+        homepageServices = homepageServices
+          .map(s => s.id === editingHomepageService.id ? data[0] : s)
+          .sort((a, b) => (a.display_order || 0) - (b.display_order || 0));
+      }
+      cancelEditHomepageService();
+    } catch (err) {
+      homepageServiceError = err.message || 'Failed to update homepage service.';
+    } finally {
+      isHomepageServiceSubmitting = false;
+    }
+  }
+
+  // Swap reordering display order for homepage services
+  async function moveHomepageService(index, direction) {
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === homepageServices.length - 1) return;
+
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const item1 = homepageServices[index];
+    const item2 = homepageServices[targetIndex];
+
+    const order1 = item1.display_order !== undefined ? item1.display_order : index;
+    const order2 = item2.display_order !== undefined ? item2.display_order : targetIndex;
+
+    const newOrder1 = order2;
+    const newOrder2 = order1 === order2 ? order1 + 1 : order1;
+
+    try {
+      const update1 = supabase.from('homepage_services').update({ display_order: newOrder1 }).eq('id', item1.id);
+      const update2 = supabase.from('homepage_services').update({ display_order: newOrder2 }).eq('id', item2.id);
+
+      const [res1, res2] = await Promise.all([update1, update2]);
+      if (res1.error) throw res1.error;
+      if (res2.error) throw res2.error;
+
+      // reload
+      const { data: hsData } = await supabase
+        .from('homepage_services')
+        .select('*')
+        .order('display_order', { ascending: true });
+      if (hsData) homepageServices = hsData;
+    } catch (err) {
+      alert(`Reordering failed: ${err.message}`);
     }
   }
 
@@ -1348,6 +1554,179 @@ UPDATE testimonials SET event_type = role WHERE event_type IS NULL AND role IS N
                               </td>
                               <td>
                                 <button class="action-btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.7rem;" onclick={() => deleteService(s.id)}>Delete</button>
+                              </td>
+                            </tr>
+                          {/each}
+                        </tbody>
+                      </table>
+                    </div>
+                  {/if}
+                </div>
+              </div>
+
+              <h2 style="font-family: var(--sans); font-size: 1.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ivory); margin-top: 4rem; margin-bottom: 1.5rem; border-top: 1px solid var(--border); padding-top: 3rem;">
+                Homepage Services ("Our Craft") Manager
+              </h2>
+
+              <details style="background: rgba(255,255,255,0.02); padding: 1rem; border-radius: 4px; margin-bottom: 2rem; border: 1px dashed var(--border);">
+                <summary style="cursor:pointer; font-weight:600; color:var(--gold);">Supabase Database Setup Instructions</summary>
+                <p style="font-size:0.85rem; margin-top:0.5rem; color:var(--muted);">If you haven't set up the <code>homepage_services</code> table yet, go to your Supabase project SQL Editor and run the following command:</p>
+                <pre style="background:#0c0c0c; padding:1rem; border-radius:4px; overflow-x:auto; font-size:0.8rem; border:1px solid var(--border); color:var(--muted); margin-top:0.5rem; white-space: pre-wrap; word-break: break-all;">CREATE TABLE IF NOT EXISTS homepage_services (
+  id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  image_url TEXT,
+  display_order INT DEFAULT 0
+);
+
+ALTER TABLE homepage_services ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public read access" ON homepage_services FOR SELECT USING (true);
+CREATE POLICY "Allow authenticated insert" ON homepage_services FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Allow authenticated update" ON homepage_services FOR UPDATE USING (auth.role() = 'authenticated') WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY "Allow authenticated delete" ON homepage_services FOR DELETE USING (auth.role() = 'authenticated');</pre>
+              </details>
+
+              <div class="portfolio-dashboard-grid">
+                <!-- Add/Edit Form -->
+                <div class="card-form-wrap">
+                  {#if editingHomepageServiceId}
+                    <h2>Edit Homepage Service</h2>
+                    {#if homepageServiceError}
+                      <div class="auth-error">{homepageServiceError}</div>
+                    {/if}
+                    <form onsubmit={saveEditHomepageService}>
+                      <div class="form-group">
+                        <label for="hm-srv-title">Service Title / Category</label>
+                        <input type="text" id="hm-srv-title" bind:value={editingHomepageService.title} placeholder="FAMILY" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="hm-srv-order">Display Order</label>
+                        <input type="number" id="hm-srv-order" bind:value={editingHomepageService.display_order} min="0" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="hm-srv-image-edit">Service Image</label>
+                        <div class="image-uploader-dropzone">
+                          <input type="file" id="hm-srv-image-edit" accept="image/*" onchange={(e) => selectedHomepageServiceImageFile = e.target.files[0]} class="file-input-hidden">
+                          <div class="uploader-prompt">
+                            <span class="uploader-icon">📷</span>
+                            {#if selectedHomepageServiceImageFile}
+                              <span class="uploader-filename">{selectedHomepageServiceImageFile.name} ({(selectedHomepageServiceImageFile.size / 1024 / 1024).toFixed(2)} MB)</span>
+                              <span class="uploader-hint">Click to replace file</span>
+                            {:else}
+                              <span class="uploader-text">Click to select photo to change</span>
+                              <span class="uploader-hint">Leave empty to keep existing photo</span>
+                            {/if}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="hm-srv-desc">Description</label>
+                        <textarea id="hm-srv-desc" bind:value={editingHomepageService.description} placeholder="Service description text..." rows="4" required></textarea>
+                      </div>
+                      <div style="display:flex; gap:1rem;">
+                        <button type="submit" class="submit-btn" disabled={isHomepageServiceSubmitting}>
+                          {isHomepageServiceSubmitting ? 'Saving...' : 'Save Changes'}
+                        </button>
+                        <button type="button" class="submit-btn" style="background:transparent; border:1px solid var(--border); color:var(--ivory);" onclick={cancelEditHomepageService}>
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  {:else}
+                    <h2>Add Homepage Service</h2>
+                    {#if homepageServiceError}
+                      <div class="auth-error">{homepageServiceError}</div>
+                    {/if}
+                    <form onsubmit={addHomepageService}>
+                      <div class="form-group">
+                        <label for="hm-srv-title-new">Service Title / Category</label>
+                        <input type="text" id="hm-srv-title-new" bind:value={newHomepageService.title} placeholder="FAMILY" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="hm-srv-order-new">Display Order</label>
+                        <input type="number" id="hm-srv-order-new" bind:value={newHomepageService.display_order} min="0" required>
+                      </div>
+                      <div class="form-group">
+                        <label for="hm-service-image">Service Image</label>
+                        <div class="image-uploader-dropzone">
+                          <input type="file" id="hm-service-image" accept="image/*" onchange={(e) => selectedHomepageServiceImageFile = e.target.files[0]} class="file-input-hidden">
+                          <div class="uploader-prompt">
+                            <span class="uploader-icon">📷</span>
+                            {#if selectedHomepageServiceImageFile}
+                              <span class="uploader-filename">{selectedHomepageServiceImageFile.name} ({(selectedHomepageServiceImageFile.size / 1024 / 1024).toFixed(2)} MB)</span>
+                              <span class="uploader-hint">Click to replace file</span>
+                            {:else}
+                              <span class="uploader-text">Drag & drop or click to select image</span>
+                              <span class="uploader-hint">PNG, JPG, WebP up to 10MB</span>
+                            {/if}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="hm-srv-desc-new">Description</label>
+                        <textarea id="hm-srv-desc-new" bind:value={newHomepageService.description} placeholder="Service description text..." rows="4" required></textarea>
+                      </div>
+                      <button type="submit" class="submit-btn" disabled={isHomepageServiceSubmitting}>
+                        {isHomepageServiceSubmitting ? 'Adding...' : 'Add Service'}
+                      </button>
+                    </form>
+                  {/if}
+                </div>
+
+                <!-- List & Reordering -->
+                <div class="card-table-wrap">
+                  <h2>Homepage Services Cards ("Our Craft")</h2>
+                  {#if homepageServices.length === 0}
+                    <p class="empty-state">No homepage services configured in database. Utilizing default mockup items (Family, Portrait Sessions, Weddings).</p>
+                  {:else}
+                    <div class="table-responsive">
+                      <table class="admin-table">
+                        <thead>
+                          <tr>
+                            <th>Image</th>
+                            <th>Service Info</th>
+                            <th>Order</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {#each homepageServices as s, idx (s.id)}
+                            <tr>
+                              <td>
+                                {#if s.image_url}
+                                  <img src={s.image_url} alt={s.title} style="width: 60px; height: 75px; object-fit: cover; border-radius: 2px; border: 1px solid var(--border);">
+                                {:else}
+                                  <div style="width: 60px; height: 75px; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: var(--muted);">No Image</div>
+                                {/if}
+                              </td>
+                              <td>
+                                <strong>{s.title}</strong>
+                                <small style="display:block; color:var(--muted); max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:0.25rem;">{s.description}</small>
+                              </td>
+                              <td>
+                                <div style="display:flex; flex-direction:column; gap:0.2rem; align-items:center;">
+                                  <button 
+                                    class="cat-btn" 
+                                    style="padding:0.1rem 0.4rem; font-size:0.6rem;" 
+                                    onclick={() => moveHomepageService(idx, 'up')}
+                                    disabled={idx === 0}
+                                  >▲</button>
+                                  <span style="font-size:0.75rem; font-weight:600; color:var(--gold);">{s.display_order || 0}</span>
+                                  <button 
+                                    class="cat-btn" 
+                                    style="padding:0.1rem 0.4rem; font-size:0.6rem;" 
+                                    onclick={() => moveHomepageService(idx, 'down')}
+                                    disabled={idx === homepageServices.length - 1}
+                                  >▼</button>
+                                </div>
+                              </td>
+                              <td>
+                                <div style="display:flex; gap:0.5rem;">
+                                  <button class="cat-btn" style="padding:0.3rem 0.6rem; font-size:0.7rem; color:var(--ivory); border-color:var(--border);" onclick={() => startEditHomepageService(s)}>Edit</button>
+                                  <button class="action-btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.7rem;" onclick={() => deleteHomepageService(s.id)}>Delete</button>
+                                </div>
                               </td>
                             </tr>
                           {/each}
