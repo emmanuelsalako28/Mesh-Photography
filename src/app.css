@@ -38,9 +38,7 @@
 
 @font-face {
   font-family: "Brittany Signature";
-  src: url("https://db.onlinewebfonts.com/t/7d4b4a11f26a798544e311f6788a452a.woff2") format("woff2"),
-       url("https://db.onlinewebfonts.com/t/7d4b4a11f26a798544e311f6788a452a.woff") format("woff"),
-       url("https://db.onlinewebfonts.com/t/7d4b4a11f26a798544e311f6788a452a.ttf") format("truetype");
+  src: url("/BrittanySignature.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
