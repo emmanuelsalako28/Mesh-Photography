@@ -56,7 +56,7 @@
   </div>
 
   <!-- RIGHT SIDE: Seamless portrait background image (occupies right half on desktop) -->
-  <div class="right-section relative w-full lg:w-1/2 h-[50vh] lg:h-full overflow-hidden bg-[var(--dark)]">
+  <div class="right-section relative w-full lg:w-1/2 h-[50vh] lg:h-full overflow-hidden bg-transparent blend-image">
     {#if mounted}
       <!-- Minimalist Decorative Tag -->
       <div 
@@ -74,9 +74,6 @@
           alt="Mesh Photography Hero Portrait" 
           class="w-full h-full object-cover object-[center_30%] lg:object-[left_center]" />
       </div>
-
-      <!-- Subtle gold bar separator -->
-      <div class="absolute left-0 top-0 bottom-0 w-[1px] bg-[var(--gold)] opacity-20 z-10 hidden lg:block"></div>
     {/if}
   </div>
 
@@ -142,6 +139,18 @@
   @media (min-width: 1280px) {
     .hero-title {
       font-size: 4.2rem !important;
+    }
+  }
+
+  /* Smooth feather-edge/mask to blend the image naturally into the background */
+  .blend-image {
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.05) 5%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.8) 35%, black 60%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.05) 5%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.8) 35%, black 60%);
+  }
+  @media (min-width: 1024px) {
+    .blend-image {
+      mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.05) 5%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.8) 35%, black 60%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.05) 5%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.8) 35%, black 60%);
     }
   }
 </style>
