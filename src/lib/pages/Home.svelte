@@ -218,7 +218,7 @@
   <Hero {showPage} />
 
   <!-- SELECTED WORK -->
-  <section class="section" style="background:transparent; position:relative; z-index:10; padding: 0;">
+  <section class="section photo-grid-section" style="background:transparent; position:relative; z-index:10; padding: 0;">
     <div class="photo-grid reveal" style="width: 100%; margin-top: 0; gap: 0;">
       {#each filteredPhotos as photo (photo.id)}
         <div class="photo-card card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} onclick={() => openLightbox(photo.label, photo.class, photo.art, photo.image_url)} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && openLightbox(photo.label, photo.class, photo.art, photo.image_url)}>

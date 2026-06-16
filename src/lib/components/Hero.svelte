@@ -15,6 +15,8 @@
       badge: 'Timeless Photography.',
       titleFirst: 'Your Story :',
       titleAccent: 'Beautifully Told',
+      titleMobileFirst: 'BUILDING\nCONFIDENCE\nIN',
+      titleMobileAccent: 'YOU',
       isImageLeft: false
     },
     {
@@ -22,6 +24,8 @@
       badge: 'Timeless Photography.',
       titleFirst: 'Memories :',
       titleAccent: 'That Last',
+      titleMobileFirst: 'MEMORIES\nTHAT',
+      titleMobileAccent: 'LAST',
       isImageLeft: true
     }
   ];
@@ -44,12 +48,12 @@
     {#if mounted && activeSlide === index}
       <!-- Single slide wrapper that transitions together -->
       <div 
-        class="absolute inset-0 w-full h-full flex flex-col lg:flex-row overflow-hidden"
+        class="absolute inset-0 w-full h-full flex flex-col lg:flex-row overflow-hidden hero-slide-wrapper"
         in:fade={{ duration: 1000 }}
         out:fade={{ duration: 1000 }}>
         
         <!-- TEXT CONTENT PANEL (Changes visual order flex-col / lg:flex-row depending on slide config) -->
-        <div class="relative w-full lg:w-1/2 min-h-[60vh] lg:h-full flex items-start pt-36 lg:pt-44 pb-12 px-6 sm:px-12 md:px-16 lg:px-16 xl:px-20 z-20 {slide.isImageLeft ? 'lg:order-2' : 'lg:order-1'}">
+        <div class="hero-text-panel relative w-full lg:w-1/2 min-h-[60vh] lg:h-full flex items-start pt-36 lg:pt-44 pb-12 px-6 sm:px-12 md:px-16 lg:px-16 xl:px-20 z-20 {slide.isImageLeft ? 'lg:order-2' : 'lg:order-1'}">
           <!-- Radial warm lighting effect -->
           <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(184,147,54,0.06),transparent_60%)] -z-10"></div>
           <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(200,169,126,0.03),transparent_55%)] -z-10"></div>
@@ -59,20 +63,26 @@
 
           <div class="max-w-xl mx-auto lg:mx-0 w-full flex flex-col justify-start">
             <!-- Eyebrow Badge -->
-            <div in:fly={{ y: 20, duration: 800, delay: 100, easing: cubicOut }} class="flex items-center gap-2 mb-6">
+            <div in:fly={{ y: 20, duration: 800, delay: 100, easing: cubicOut }} class="flex items-center gap-2 mb-6 hero-eyebrow-wrapper">
               <span class="w-1.5 h-1.5 rounded-full bg-[var(--gold)]"></span>
               <span class="text-xs uppercase tracking-[0.22em] font-semibold text-[var(--gold)]">
                 {slide.badge}
               </span>
             </div>
 
-            <!-- Heading -->
-            <h1 in:fly={{ y: 20, duration: 800, delay: 250, easing: cubicOut }} class="hero-title text-4xl sm:text-5xl md:text-5xl lg:text-[3.2rem] xl:text-[3.8rem] font-bold text-[var(--ivory)] leading-[1.15] mb-8 font-serif select-none">
+            <!-- Heading Desktop -->
+            <h1 in:fly={{ y: 20, duration: 800, delay: 250, easing: cubicOut }} class="hero-title hidden md:block text-4xl sm:text-5xl md:text-5xl lg:text-[3.2rem] xl:text-[3.8rem] font-bold text-[var(--ivory)] leading-[1.15] mb-8 font-serif select-none">
               {slide.titleFirst} <span class="accent-text italic font-medium">{slide.titleAccent}</span>.
             </h1>
 
-            <!-- CTA Buttons -->
-            <div in:fly={{ y: 20, duration: 800, delay: 400, easing: cubicOut }} class="flex flex-wrap gap-4 mb-12 lg:mb-16">
+            <!-- Heading Mobile -->
+            <h1 in:fly={{ y: 20, duration: 800, delay: 250, easing: cubicOut }} class="hero-title-mobile block md:hidden text-right text-[2rem] font-bold text-[var(--ivory)] leading-[1.25] mb-6 select-none font-sans uppercase">
+              <span class="block whitespace-pre-line">{slide.titleMobileFirst}</span>
+              <span class="block font-black text-black dark:text-white">{slide.titleMobileAccent}</span>
+            </h1>
+
+            <!-- CTA Buttons Desktop -->
+            <div in:fly={{ y: 20, duration: 800, delay: 400, easing: cubicOut }} class="hidden md:flex flex-wrap gap-4 mb-12 lg:mb-16">
               <button 
                 onclick={() => showPage('booking')} 
                 class="btn-primary rounded-full px-8 py-4 text-xs font-semibold uppercase tracking-widest shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
@@ -85,11 +95,20 @@
                 View Portfolio
               </button>
             </div>
+
+            <!-- CTA Button Mobile -->
+            <div in:fly={{ y: 20, duration: 800, delay: 400, easing: cubicOut }} class="flex md:hidden justify-end w-full mb-12">
+              <button 
+                onclick={() => showPage('booking')} 
+                class="hero-mobile-btn">
+                LET'S BEGIN
+              </button>
+            </div>
           </div>
         </div>
 
         <!-- IMAGE PANEL -->
-        <div class="right-section relative w-full lg:w-1/2 h-[50vh] lg:h-full overflow-hidden bg-transparent blend-image {slide.isImageLeft ? 'lg:order-1' : 'lg:order-2'} {slide.isImageLeft ? 'blend-left' : 'blend-right'}">
+        <div class="hero-image-panel right-section relative w-full lg:w-1/2 h-[50vh] lg:h-full overflow-hidden bg-transparent blend-image {slide.isImageLeft ? 'lg:order-1' : 'lg:order-2'} {slide.isImageLeft ? 'blend-left' : 'blend-right'}">
           <!-- Minimalist Decorative Tag -->
           <div 
             in:fade={{ duration: 1000, delay: 1000 }}
@@ -111,6 +130,18 @@
       </div>
     {/if}
   {/each}
+
+  <!-- Slide Dot Indicators -->
+  <div class="hero-indicators">
+    {#each slides as _, index}
+      <button 
+        class="hero-dot" 
+        class:active={activeSlide === index} 
+        onclick={() => activeSlide = index}
+        aria-label="Go to slide {index + 1}">
+      </button>
+    {/each}
+  </div>
 
 </div>
 

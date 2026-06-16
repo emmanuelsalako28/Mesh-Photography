@@ -6,8 +6,9 @@
 <svelte:window bind:scrollY={y} />
 
 <nav class:scrolled={y > 60}>
-  <a class="nav-logo" href="#home" onclick={(e) => { e.preventDefault(); showPage('home'); }}>
-    Meshach Olajide
+  <a class="nav-logo signature-logo" href="#home" onclick={(e) => { e.preventDefault(); showPage('home'); }}>
+    <span class="sig-name">Meshach Olajide</span>
+    <span class="sig-sub">PHOTOGRAPHY</span>
   </a>
     <div class="nav-links">
     <a href="#home" class:active={currentPage === 'home'} onclick={(e) => { e.preventDefault(); showPage('home'); }}>home</a>
