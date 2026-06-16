@@ -96,8 +96,9 @@
       <button class="cat-btn" class:active={activeCategory === 'portraits'} onclick={() => activeCategory = 'portraits'}>Portraits</button>
       <button class="cat-btn" class:active={activeCategory === 'events'} onclick={() => activeCategory = 'events'}>Events</button>
       <button class="cat-btn" class:active={activeCategory === 'family'} onclick={() => activeCategory = 'family'}>Family</button>
-      <button class="cat-btn" class:active={activeCategory === 'corporate'} onclick={() => activeCategory = 'corporate'}>Corporate</button>
+      <button class="cat-btn" class:active={activeCategory === 'corporate'} onclick={() => activeCategory = 'corporate'}>Maternity</button>
       <button class="cat-btn" class:active={activeCategory === 'fashion'} onclick={() => activeCategory = 'fashion'}>Fashion</button>
+      <button class="cat-btn" class:active={activeCategory === 'fashion'} onclick={() => activeCategory = 'fashion'}>Kids</button>
       <button class="cat-btn" class:active={activeCategory === 'videos'} onclick={() => activeCategory = 'videos'}>Videos</button>
     </div>
 
