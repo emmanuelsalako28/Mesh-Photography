@@ -1,81 +1,116 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { fade, fly } from 'svelte/transition';
   import { cubicOut } from 'svelte/easing';
 
   let { showPage } = $props();
 
   let mounted = $state(false);
+  let activeSlide = $state(0); // 0 or 1
+  let intervalId;
+
+  const slides = [
+    {
+      image: '/hero1.png',
+      badge: 'Timeless Photography.',
+      titleFirst: 'Your Story :',
+      titleAccent: 'Beautifully Told',
+      isImageLeft: false
+    },
+    {
+      image: '/hero2.jpg',
+      badge: 'Timeless Photography.',
+      titleFirst: 'Memories :',
+      titleAccent: 'That Last',
+      isImageLeft: true
+    }
+  ];
+
   onMount(() => {
     mounted = true;
+    intervalId = setInterval(() => {
+      activeSlide = (activeSlide + 1) % slides.length;
+    }, 6000); // changes slide every 6 seconds
+  });
+
+  onDestroy(() => {
+    if (intervalId) clearInterval(intervalId);
   });
 </script>
 
-<div class="clean-hero-container relative w-full min-h-screen lg:h-screen flex flex-col lg:flex-row overflow-hidden bg-[var(--ink)]">
+<div class="clean-hero-container relative w-full min-h-screen lg:h-screen overflow-hidden bg-[var(--ink)]">
   
-  <!-- LEFT SIDE: Text and CTA Content (occupies left half) -->
-  <div class="left-section relative w-full lg:w-1/2 min-h-[60vh] lg:h-full flex items-start pt-36 lg:pt-44 pb-12 px-6 sm:px-12 md:px-16 lg:px-16 xl:px-20 z-20">
-    <!-- Radial warm lighting effect -->
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(184,147,54,0.06),transparent_60%)] -z-10"></div>
-    <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(200,169,126,0.03),transparent_55%)] -z-10"></div>
-    
-    <!-- Subtle plaster-like noise texture overlay -->
-    <div class="absolute inset-0 opacity-[0.015] pointer-events-none mix-blend-overlay -z-10" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http:%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22%2F%3E%3C%2Fsvg%3E');"></div>
-
-    <div class="max-w-xl mx-auto lg:mx-0 w-full flex flex-col justify-start">
-      {#if mounted}
-        <!-- Award Eyebrow Badge -->
-        <div in:fly={{ y: 20, duration: 800, delay: 100, easing: cubicOut }} class="flex items-center gap-2 mb-6">
-          <span class="w-1.5 h-1.5 rounded-full bg-[var(--gold)]"></span>
-          <span class="text-xs uppercase tracking-[0.22em] font-semibold text-[var(--gold)]">
-            Timeless Photography.
-          </span>
-        </div>
-
-        <!-- Large Premium Typography Heading -->
-        <h1 in:fly={{ y: 20, duration: 800, delay: 250, easing: cubicOut }} class="hero-title text-4xl sm:text-5xl md:text-5xl lg:text-[3.2rem] xl:text-[3.8rem] font-bold text-[var(--ivory)] leading-[1.15] mb-8 font-serif select-none">
-          Your Story : <span class="accent-text italic font-medium">Beautifully Told</span>.
-        </h1>
-
-        <!-- CTA Buttons -->
-        <div in:fly={{ y: 20, duration: 800, delay: 400, easing: cubicOut }} class="flex flex-wrap gap-4 mb-12 lg:mb-16">
-          <button 
-            onclick={() => showPage('booking')} 
-            class="btn-primary rounded-full px-8 py-4 text-xs font-semibold uppercase tracking-widest shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
-            Book a Session
-          </button>
+  {#each slides as slide, index}
+    {#if mounted && activeSlide === index}
+      <!-- Single slide wrapper that transitions together -->
+      <div 
+        class="absolute inset-0 w-full h-full flex flex-col lg:flex-row overflow-hidden"
+        in:fade={{ duration: 1000 }}
+        out:fade={{ duration: 1000 }}>
+        
+        <!-- TEXT CONTENT PANEL (Changes visual order flex-col / lg:flex-row depending on slide config) -->
+        <div class="relative w-full lg:w-1/2 min-h-[60vh] lg:h-full flex items-start pt-36 lg:pt-44 pb-12 px-6 sm:px-12 md:px-16 lg:px-16 xl:px-20 z-20 {slide.isImageLeft ? 'lg:order-2' : 'lg:order-1'}">
+          <!-- Radial warm lighting effect -->
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(184,147,54,0.06),transparent_60%)] -z-10"></div>
+          <div class="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(200,169,126,0.03),transparent_55%)] -z-10"></div>
           
-          <button 
-            onclick={() => showPage('portfolio')} 
-            class="btn-outline rounded-full px-8 py-4 text-xs font-semibold uppercase tracking-widest transition-all duration-300 transform hover:-translate-y-0.5 bg-transparent hover:bg-[rgba(184,147,54,0.06)]">
-            View Portfolio
-          </button>
+          <!-- Subtle noise overlay -->
+          <div class="absolute inset-0 opacity-[0.015] pointer-events-none mix-blend-overlay -z-10" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http:%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22%2F%3E%3C%2Ffilter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22%2F%3E%3C%2Fsvg%3E');"></div>
+
+          <div class="max-w-xl mx-auto lg:mx-0 w-full flex flex-col justify-start">
+            <!-- Eyebrow Badge -->
+            <div in:fly={{ y: 20, duration: 800, delay: 100, easing: cubicOut }} class="flex items-center gap-2 mb-6">
+              <span class="w-1.5 h-1.5 rounded-full bg-[var(--gold)]"></span>
+              <span class="text-xs uppercase tracking-[0.22em] font-semibold text-[var(--gold)]">
+                {slide.badge}
+              </span>
+            </div>
+
+            <!-- Heading -->
+            <h1 in:fly={{ y: 20, duration: 800, delay: 250, easing: cubicOut }} class="hero-title text-4xl sm:text-5xl md:text-5xl lg:text-[3.2rem] xl:text-[3.8rem] font-bold text-[var(--ivory)] leading-[1.15] mb-8 font-serif select-none">
+              {slide.titleFirst} <span class="accent-text italic font-medium">{slide.titleAccent}</span>.
+            </h1>
+
+            <!-- CTA Buttons -->
+            <div in:fly={{ y: 20, duration: 800, delay: 400, easing: cubicOut }} class="flex flex-wrap gap-4 mb-12 lg:mb-16">
+              <button 
+                onclick={() => showPage('booking')} 
+                class="btn-primary rounded-full px-8 py-4 text-xs font-semibold uppercase tracking-widest shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5">
+                Book a Session
+              </button>
+              
+              <button 
+                onclick={() => showPage('portfolio')} 
+                class="btn-outline rounded-full px-8 py-4 text-xs font-semibold uppercase tracking-widest transition-all duration-300 transform hover:-translate-y-0.5 bg-transparent hover:bg-[rgba(184,147,54,0.06)]">
+                View Portfolio
+              </button>
+            </div>
+          </div>
         </div>
-      {/if}
-    </div>
-  </div>
 
-  <!-- RIGHT SIDE: Seamless portrait background image (occupies right half on desktop) -->
-  <div class="right-section relative w-full lg:w-1/2 h-[50vh] lg:h-full overflow-hidden bg-transparent blend-image">
-    {#if mounted}
-      <!-- Minimalist Decorative Tag -->
-      <div 
-        in:fade={{ duration: 1000, delay: 1000 }}
-        class="absolute top-8 right-8 z-20 hidden sm:flex items-center gap-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-full py-2 px-4 shadow-sm text-white">
-        <span class="text-[10px] uppercase tracking-[0.2em] font-medium font-sans">Mesh Photography Studio</span>
-      </div>
+        <!-- IMAGE PANEL -->
+        <div class="right-section relative w-full lg:w-1/2 h-[50vh] lg:h-full overflow-hidden bg-transparent blend-image {slide.isImageLeft ? 'lg:order-1' : 'lg:order-2'} {slide.isImageLeft ? 'blend-left' : 'blend-right'}">
+          <!-- Minimalist Decorative Tag -->
+          <div 
+            in:fade={{ duration: 1000, delay: 1000 }}
+            class="absolute bottom-8 {slide.isImageLeft ? 'left-8' : 'right-8'} z-20 hidden sm:flex items-center gap-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-full py-2 px-4 shadow-sm text-white">
+            <span class="text-[10px] uppercase tracking-[0.2em] font-medium font-sans">Mesh Photography Studio</span>
+          </div>
 
-      <!-- Main Portrait Image -->
-      <div 
-        in:fade={{ duration: 1200, delay: 350 }}
-        class="w-full h-full transition-transform duration-[2500ms] hover:scale-105">
-        <img 
-          src="/hero1.png" 
-          alt="Mesh Photography Hero Portrait" 
-          class="w-full h-full object-cover object-[center_30%] lg:object-[left_center]" />
+          <!-- Main Portrait Image -->
+          <div 
+            in:fade={{ duration: 1200, delay: 350 }}
+            class="w-full h-full transition-transform duration-[2500ms] hover:scale-105">
+            <img 
+              src={slide.image} 
+              alt="Mesh Photography Hero Portrait" 
+              class="w-full h-full object-cover object-[center_30%] lg:object-[left_center]" />
+          </div>
+        </div>
+
       </div>
     {/if}
-  </div>
+  {/each}
 
 </div>
 
@@ -105,7 +140,7 @@
     transform: scaleX(1);
   }
 
-  /* Specific overriding styles for the buttons to be rounded-full */
+  /* Overriding styles for the buttons */
   :global(.btn-primary.rounded-full) {
     border-radius: 9999px !important;
   }
@@ -142,15 +177,23 @@
     }
   }
 
-  /* Smooth feather-edge/mask to blend the image naturally into the background */
+  /* Feathered edge gradients to blend the image naturally based on its position */
   .blend-image {
-    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.05) 5%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.8) 35%, black 60%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.05) 5%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.8) 35%, black 60%);
+    mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.1) 8%, black 25%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.1) 8%, black 25%);
   }
+
   @media (min-width: 1024px) {
-    .blend-image {
-      mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.05) 5%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.8) 35%, black 60%);
-      -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.05) 5%, rgba(0, 0, 0, 0.3) 15%, rgba(0, 0, 0, 0.8) 35%, black 60%);
+    /* Image on right: mask fades the left side */
+    .blend-right {
+      mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.1) 8%, black 28%);
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.1) 8%, black 28%);
+    }
+
+    /* Image on left: mask fades the right side */
+    .blend-left {
+      mask-image: linear-gradient(to left, transparent 0%, rgba(0, 0, 0, 0.1) 8%, black 28%);
+      -webkit-mask-image: linear-gradient(to left, transparent 0%, rgba(0, 0, 0, 0.1) 8%, black 28%);
     }
   }
 </style>
