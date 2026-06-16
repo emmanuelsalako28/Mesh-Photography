@@ -13,10 +13,10 @@
 
 <div class="mobile-nav" class:open={isOpen}>
   <button class="mobile-close" onclick={toggleMobileNav}>&times;</button>
-  <a href="#home" onclick={(e) => { e.preventDefault(); navigate('home'); }}>home</a>
-  <a href="#about" onclick={(e) => { e.preventDefault(); navigate('about'); }}>about</a>
-  <a href="#portfolio" onclick={(e) => { e.preventDefault(); navigate('portfolio', 'all'); }}>pictures</a>
-  <a href="#videos" onclick={(e) => { e.preventDefault(); navigate('portfolio', 'videos'); }}>videos</a>
+  <a href="#home" onclick={(e) => { e.preventDefault(); navigate('home'); }}>Home</a>
+  <a href="#about" onclick={(e) => { e.preventDefault(); navigate('about'); }}>About</a>
+  <a href="#portfolio" onclick={(e) => { e.preventDefault(); navigate('portfolio', 'all'); }}>Pictures</a>
+  <a href="#videos" onclick={(e) => { e.preventDefault(); navigate('portfolio', 'videos'); }}>Videos</a>
   <a href="#blog" onclick={(e) => { e.preventDefault(); navigate('blog'); }}>blog</a>
-  <a href="#contact" onclick={(e) => { e.preventDefault(); navigate('contact'); }}>contact & bookings</a>
+  <a href="#contact" onclick={(e) => { e.preventDefault(); navigate('contact'); }}>Contact & Bookings</a>
 </div>
