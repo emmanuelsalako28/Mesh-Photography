@@ -1,4 +1,7 @@
 <script>
+  import { fade, scale } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
+
   let { isOpen = false, title = '', style = '', symbol = '', imageUrl = '', closeLightbox } = $props();
 
   // Control scrolling on the document body when lightbox is active
@@ -21,32 +24,47 @@
 </script>
 
 {#if isOpen}
-  <div class="lightbox open" onclick={handleOverlayClick} role="presentation">
-    <button class="lightbox-close" onclick={closeLightbox}>×</button>
-    <div class="lightbox-inner">
-      <div class="lightbox-placeholder">
+  <div 
+    class="lightbox" 
+    onclick={handleOverlayClick} 
+    role="presentation"
+    transition:fade={{ duration: 250 }}>
+    
+    <button class="lightbox-close" onclick={closeLightbox} aria-label="Close Lightbox">×</button>
+    
+    <div 
+      class="lightbox-inner"
+      transition:scale={{ duration: 350, start: 0.92, easing: cubicOut }}>
+      
+      <div class="lightbox-content">
         {#if imageUrl}
-          <div style="display:flex;flex-direction:column;align-items:center;gap:1.5rem;">
-            <img src={imageUrl} alt={title} style="max-width: 80vw; max-height: 70vh; width: auto; height: auto; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.8); object-fit: contain;" />
-            <div style="font-size:0.9rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);text-align:center;font-weight:600;">
-              {title}
-            </div>
+          <div class="lightbox-media-wrapper">
+            <img src={imageUrl} alt={title} class="lightbox-img-hd" />
+            {#if title}
+              <div class="lightbox-caption">
+                {title}
+              </div>
+            {/if}
           </div>
         {:else if style}
-          <div style="display:flex;flex-direction:column;align-items:center;gap:1.5rem;">
-            <div class="{style}" style="width: 75vw; max-width: 380px; aspect-ratio: 128/169; border: 1px solid var(--border); box-shadow: 0 20px 50px rgba(0,0,0,0.8); position: relative; display: flex; align-items: center; justify-content: center;">
-              <div class="photo-art" style="font-size: 8rem; opacity: 0.2;">{symbol || '◆'}</div>
+          <div class="lightbox-media-wrapper">
+            <div class="lightbox-gradient-card {style}">
+              <div class="photo-art-fallback">{symbol || '◆'}</div>
             </div>
-            <div style="font-size:0.9rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);text-align:center;font-weight:600;">
-              {title}
-            </div>
+            {#if title}
+              <div class="lightbox-caption">
+                {title}
+              </div>
+            {/if}
           </div>
         {:else}
-          <div style="display:flex;align-items:center;justify-content:center;width:70vw;max-width:900px;aspect-ratio:4/3;border:1px solid rgba(201,168,76,0.3);background:linear-gradient(145deg,#1a1408,#0c0c0c,#1a1020);flex-direction:column;gap:1rem;color:rgba(201,168,76,0.15);font-family:'Playfair Display',serif">
-            <div style="font-size:8rem">◆</div>
-            <div style="font-size:0.9rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(201,168,76,0.4)">
-              {title}
-            </div>
+          <div class="lightbox-empty-fallback">
+            <div class="fallback-icon">◆</div>
+            {#if title}
+              <div class="fallback-caption">
+                {title}
+              </div>
+            {/if}
           </div>
         {/if}
       </div>
