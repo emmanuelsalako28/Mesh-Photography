@@ -16,7 +16,7 @@
     
     <div class="nav-item-dropdown">
       <a href="#portfolio" class:active={currentPage === 'portfolio'} onclick={(e) => { e.preventDefault(); showPage('portfolio', 'all'); }}>
-        Pictures <span class="chevron">˅</span>
+        Gallery <span class="chevron">˅</span>
       </a>
       <div class="nav-dropdown-content">
         <a href="#portfolio-portraits" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'portraits'); }}>Portraits</a>
