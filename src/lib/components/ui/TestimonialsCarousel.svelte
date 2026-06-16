@@ -99,17 +99,17 @@
             <!-- Client Quote and Details -->
             <div class="flex flex-col text-left">
               <!-- Name (Uppercase, bold) -->
-              <h3 class="text-base font-bold uppercase tracking-wider text-zinc-900 dark:text-white leading-tight mb-1 font-sans">
+              <h3 class="text-base font-bold uppercase tracking-wider text-black dark:text-white leading-tight mb-1 font-sans">
                 {review.name || review.author || 'Anonymous'}
               </h3>
               
               <!-- Event Type / Organization (Uppercase, gold/muted, tracking) -->
-              <span class="text-xs font-semibold uppercase tracking-widest text-zinc-500 dark:text-gold/80 mb-4 font-sans">
+              <span class="text-xs font-semibold uppercase tracking-widest text-black dark:text-gold/80 mb-4 font-sans">
                 {review.event_type || review.role || review.org || 'Client'}
               </span>
 
               <!-- Testimonial quote -->
-              <p class="text-sm font-light text-zinc-600 dark:text-zinc-300 leading-relaxed font-sans max-w-md">
+              <p class="text-sm font-light text-black dark:text-white leading-relaxed font-sans max-w-md">
                 {review.body || review.quote || ''}
               </p>
             </div>

@@ -301,15 +301,15 @@
   </section>
 
   <!-- TESTIMONIALS -->
-  <section class="section" style="border-top: 1px solid var(--border);">
+  <section class="section" style="border-top: 1px solid var(--border); padding-top: 3.5rem; padding-bottom: 4rem;">
     <div style="max-width: 1200px; margin: 0 auto; padding: 0 3rem;">
-      <div class="reveal" style="margin-bottom: 4rem; text-align: left;">
+      <div class="reveal" style="margin-bottom: 2.5rem; text-align: left;">
         <h2 style="font-family: var(--sans); font-size: 1.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ivory); margin-bottom: 0.75rem;">
           Testimonials
         </h2>
         <div style="width: 60px; height: 4px; background: var(--ivory);"></div>
       </div>
-      <div class="reveal" style="margin-top: 3rem;">
+      <div class="reveal" style="margin-top: 2rem;">
         <TestimonialsCarousel testimonials={activeTestimonialsList} />
       </div>
     </div>

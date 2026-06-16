@@ -2,6 +2,8 @@
 @import "tailwindcss/utilities";
 @import "tw-animate-css";
 
+@variant dark (.dark-mode &);
+
 @theme {
   --color-background: var(--ink);
   --color-foreground: var(--ivory);
