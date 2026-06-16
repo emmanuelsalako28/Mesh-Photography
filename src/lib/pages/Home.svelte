@@ -1,6 +1,8 @@
 <script>
+  // @ts-nocheck
   import { onMount } from 'svelte';
   import { supabase } from '../supabaseClient.js';
+  import TestimonialsCarousel from '../components/ui/TestimonialsCarousel.svelte';
 
   let { showPage, openLightbox } = $props();
 
@@ -33,33 +35,12 @@
 
   let activeFilter = $state('all');
   let activeSlide = $state(0);
-  let activeTestimonial = $state(0);
 
   // Auto-playing hero slider
   $effect(() => {
     const timer = setInterval(() => {
       activeSlide = (activeSlide + 1) % 2;
     }, 5500);
-    return () => clearInterval(timer);
-  });
-
-  function nextTestimonial() {
-    if (activeTestimonialsList.length > 0) {
-      activeTestimonial = (activeTestimonial + 1) % activeTestimonialsList.length;
-    }
-  }
-
-  function prevTestimonial() {
-    if (activeTestimonialsList.length > 0) {
-      activeTestimonial = (activeTestimonial - 1 + activeTestimonialsList.length) % activeTestimonialsList.length;
-    }
-  }
-
-  // Auto-playing testimonials slider
-  $effect(() => {
-    const timer = setInterval(() => {
-      nextTestimonial();
-    }, 7000);
     return () => clearInterval(timer);
   });
 
@@ -85,32 +66,46 @@
 
   const testimonials = [
     {
-      quote: "The team at Mesh-Photography is exceptionally professional. Even when we arrived unprepared for our shoot, they guided us through poses and made us feel at ease. The final portraits are absolute masterpieces.",
+      id: 'mock-1',
+      name: "Damilola Benson",
       author: "Damilola Benson",
+      event_type: "Corporate Branding",
       role: "Corporate Branding Client",
       org: "Benson Holdings",
-      portraitClass: "ph-portrait",
-      portraitArt: "◆"
+      rating: 5,
+      body: "The team at Mesh-Photography is exceptionally professional. Even when we arrived unprepared for our shoot, they guided us through poses and made us feel at ease. The final portraits are absolute masterpieces.",
+      quote: "The team at Mesh-Photography is exceptionally professional. Even when we arrived unprepared for our shoot, they guided us through poses and made us feel at ease. The final portraits are absolute masterpieces.",
+      profile_photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150&h=150"
     },
     {
-      quote: "Meshach documented our wedding day with so much grace. The lighting and candid moments caught on camera are truly timeless. Looking back at the images makes us feel the exact same love.",
+      id: 'mock-2',
+      name: "Sarah & Tunde",
       author: "Sarah & Tunde",
+      event_type: "Wedding",
       role: "Wedding Session",
       org: "Private Clients",
-      portraitClass: "ph-wedding",
-      portraitArt: "♦"
+      rating: 5,
+      body: "Meshach documented our wedding day with so much grace. The lighting and candid moments caught on camera are truly timeless. Looking back at the images makes us feel the exact same love.",
+      quote: "Meshach documented our wedding day with so much grace. The lighting and candid moments caught on camera are truly timeless. Looking back at the images makes us feel the exact same love.",
+      profile_photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150&h=150"
     },
     {
-      quote: "I had a personal branding session at the studio. They are true visual storytellers who know how to capture confidence. I struggled to select my favorites because all the images were so lovely!",
+      id: 'mock-3',
+      name: "Victoria Alao",
       author: "Victoria Alao",
+      event_type: "Portrait",
       role: "Creative Director",
       org: "Alao Agency",
-      portraitClass: "ph-fashion",
-      portraitArt: "✦"
+      rating: 5,
+      body: "I had a personal branding session at the studio. They are true visual storytellers who know how to capture confidence. I struggled to select my favorites because all the images were so lovely!",
+      quote: "I had a personal branding session at the studio. They are true visual storytellers who know how to capture confidence. I struggled to select my favorites because all the images were so lovely!",
+      profile_photo: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150&h=150"
     }
   ];
 
+  /** @type {any[]} */
   let dbPhotos = $state([]);
+  /** @type {any[]} */
   let dbTestimonials = $state([]);
 
   onMount(async () => {
@@ -134,17 +129,23 @@
 
         const { data: tData } = await supabase
           .from('testimonials')
-          .select('*')
-          .order('created_at', { ascending: true });
+          .select('*');
         if (tData && tData.length > 0) {
-          dbTestimonials = tData.map(item => ({
-            quote: item.quote,
-            author: item.author,
-            role: item.role,
-            org: item.org,
-            portraitClass: item.portrait_class,
-            portraitArt: item.portrait_art
-          }));
+          dbTestimonials = tData
+            .filter(item => item.is_active !== false && item.active !== false)
+            .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
+            .map(item => ({
+              id: item.id,
+              name: item.name || item.author || 'Anonymous',
+              profile_photo: item.profile_photo || item.image_url || null,
+              event_type: item.event_type || item.role || item.org || '',
+              rating: item.rating !== undefined ? item.rating : 5,
+              body: item.testimonial_text || item.quote || '',
+              quote: item.testimonial_text || item.quote || '',
+              author: item.name || item.author || 'Anonymous',
+              role: item.event_type || item.role || '',
+              org: item.org || ''
+            }));
         }
       } catch (err) {
         console.warn('Error loading homepage data from Supabase:', err);
@@ -302,64 +303,14 @@
   <!-- TESTIMONIALS -->
   <section class="section" style="border-top: 1px solid var(--border);">
     <div style="max-width: 1200px; margin: 0 auto; padding: 0 3rem;">
-      <div class="section-header reveal">
-        <div>
-          <span class="section-label">kind words</span>
-          <h2 class="section-title" style="font-family: var(--serif); font-style: italic; font-weight: 300;">testimonials</h2>
-        </div>
-        <p class="section-sub">Read what our clients say about their sessions and final visual stories.</p>
+      <div class="reveal" style="margin-bottom: 4rem; text-align: left;">
+        <h2 style="font-family: var(--sans); font-size: 1.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ivory); margin-bottom: 0.75rem;">
+          Testimonials
+        </h2>
+        <div style="width: 60px; height: 4px; background: var(--ivory);"></div>
       </div>
-      
-      <div class="testimonials-slider reveal">
-        {#key activeTestimonial}
-          {#if activeTestimonialsList && activeTestimonialsList[activeTestimonial]}
-            <div class="testimonial-slide-layout">
-              <div class="testimonial-slide-left">
-                <div class="testimonial-portrait-frame {activeTestimonialsList[activeTestimonial].portraitClass}">
-                  <span class="testimonial-portrait-art">{activeTestimonialsList[activeTestimonial].portraitArt}</span>
-                </div>
-              </div>
-              <div class="testimonial-slide-right">
-                <span class="testimonial-slide-quote-icon">“</span>
-                <div class="testimonial-stars">★★★★★</div>
-                <p class="testimonial-slide-quote">“{activeTestimonialsList[activeTestimonial].quote}”</p>
-                <div class="testimonial-meta">
-                  <h3 class="testimonial-slide-author">{activeTestimonialsList[activeTestimonial].author}</h3>
-                  <p class="testimonial-slide-title">
-                    {activeTestimonialsList[activeTestimonial].role} <span style="color:var(--gold)">/</span> {activeTestimonialsList[activeTestimonial].org}
-                  </p>
-                </div>
-              </div>
-            </div>
-          {/if}
-        {/key}
-
-        <div class="testimonial-controls">
-          <button class="testimonial-control-btn" onclick={prevTestimonial} aria-label="Previous Testimonial">
-            <span>←</span>
-          </button>
-          
-          <div class="testimonial-indicators">
-            {#each activeTestimonialsList as _, idx}
-              <button 
-                class="testimonial-dot" 
-                class:active={idx === activeTestimonial} 
-                onclick={() => activeTestimonial = idx} 
-                aria-label="Go to testimonial {idx + 1}"
-              ></button>
-            {/each}
-          </div>
-
-          <button class="testimonial-control-btn" onclick={nextTestimonial} aria-label="Next Testimonial">
-            <span>→</span>
-          </button>
-        </div>
-        
-        <div class="testimonial-progress-container">
-          {#key activeTestimonial}
-            <div class="testimonial-progress-bar"></div>
-          {/key}
-        </div>
+      <div class="reveal" style="margin-top: 3rem;">
+        <TestimonialsCarousel testimonials={activeTestimonialsList} />
       </div>
     </div>
   </section>

@@ -1,3 +1,37 @@
+@import "tailwindcss/theme";
+@import "tailwindcss/utilities";
+@import "tw-animate-css";
+
+@theme {
+  --color-background: var(--ink);
+  --color-foreground: var(--ivory);
+  --color-card: var(--dark);
+  --color-card-foreground: var(--ivory);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+  }
+}
+
+@keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
+  }
+}
+
 /* Professional & Clean Design System - Meshach Olajide Photography */
 
 @font-face {

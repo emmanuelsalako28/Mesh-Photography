@@ -8,6 +8,9 @@ const isConfigured =
   supabaseAnonKey && 
   supabaseAnonKey !== 'YOUR_SUPABASE_PUBLIC_ANON_KEY_HERE';
 
-export const supabase = isConfigured 
+const client = isConfigured 
   ? createClient(supabaseUrl, supabaseAnonKey) 
   : null;
+
+/** @type {any} */
+export const supabase = client;

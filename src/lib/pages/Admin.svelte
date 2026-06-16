@@ -1,4 +1,5 @@
 <script>
+  // @ts-nocheck
   import { onMount } from 'svelte';
   import { supabase } from '../supabaseClient.js';
 
@@ -6,6 +7,7 @@
   let { showPage } = $props();
 
   // State
+  /** @type {any} */
   let session = $state(null);
   let activeTab = $state('bookings'); // 'bookings' | 'messages' | 'portfolio' | 'testimonials' | 'services' | 'about' | 'blog'
   
@@ -16,11 +18,17 @@
   let isAuthLoading = $state(false);
 
   // Data Lists
+  /** @type {any[]} */
   let bookings = $state([]);
+  /** @type {any[]} */
   let messages = $state([]);
+  /** @type {any[]} */
   let portfolioItems = $state([]);
+  /** @type {any[]} */
   let testimonials = $state([]);
+  /** @type {any[]} */
   let services = $state([]);
+  /** @type {any[]} */
   let blogPosts = $state([]);
   let isDataLoading = $state(false);
 
@@ -32,19 +40,40 @@
     aspect_ratio: '100%',
     custom_style: ''
   });
+  /** @type {any} */
   let selectedImageFile = $state(null);
   let itemSubmitError = $state('');
   let isItemSubmitting = $state(false);
 
   // New Testimonial Form State
   let newTestimonial = $state({
-    quote: '',
+    name: '',
     author: '',
+    event_type: 'Wedding',
     role: '',
     org: '',
-    portrait_class: 'ph-portrait',
-    portrait_art: '◆'
+    rating: 5,
+    testimonial_text: '',
+    quote: '',
+    display_order: 0,
+    is_active: true,
+    profile_photo: ''
   });
+  /** @type {any} */
+  let editingTestimonialId = $state(null);
+  /** @type {any} */
+  let editingTestimonial = $state({
+    id: '',
+    name: '',
+    event_type: 'Wedding',
+    rating: 5,
+    testimonial_text: '',
+    display_order: 0,
+    is_active: true,
+    profile_photo: ''
+  });
+  /** @type {any} */
+  let selectedTestimonialImageFile = $state(null);
   let testimonialError = $state('');
   let isTestimonialSubmitting = $state(false);
 
@@ -351,34 +380,210 @@
     }
   }
 
-  // Add testimonial handler
+  // Add testimonial handler (with profile photo upload)
   async function addTestimonial(e) {
     e.preventDefault();
     testimonialError = '';
     isTestimonialSubmitting = true;
     try {
+      let profilePhotoUrl = '';
+      if (selectedTestimonialImageFile) {
+        const fileExt = selectedTestimonialImageFile.name.split('.').pop();
+        const fileName = `testimonials/${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+        const { error: uploadErr } = await supabase.storage
+          .from('portfolio')
+          .upload(fileName, selectedTestimonialImageFile);
+        
+        if (uploadErr) {
+          throw new Error(`Profile photo upload failed: ${uploadErr.message}`);
+        }
+        
+        const { data: urlData } = supabase.storage.from('portfolio').getPublicUrl(fileName);
+        profilePhotoUrl = urlData.publicUrl;
+      }
+
+      const payload = {
+        name: newTestimonial.name,
+        author: newTestimonial.name, // legacy fallback
+        event_type: newTestimonial.event_type,
+        role: newTestimonial.event_type, // legacy fallback
+        org: 'Client', // legacy fallback
+        rating: Number(newTestimonial.rating),
+        testimonial_text: newTestimonial.testimonial_text,
+        quote: newTestimonial.testimonial_text, // legacy fallback
+        display_order: Number(newTestimonial.display_order),
+        is_active: newTestimonial.is_active,
+        active: newTestimonial.is_active, // legacy fallback
+        profile_photo: profilePhotoUrl || null,
+        portrait_class: 'ph-portrait', // legacy fallback
+        portrait_art: '★' // legacy fallback
+      };
+
       const { data, error } = await supabase
         .from('testimonials')
-        .insert([newTestimonial])
+        .insert([payload])
         .select();
+
       if (error) throw error;
+      
       if (data && data[0]) {
         testimonials = [data[0], ...testimonials];
       }
+      
+      // Reset form
       newTestimonial = {
-        quote: '',
+        name: '',
         author: '',
+        event_type: 'Wedding',
         role: '',
         org: '',
-        portrait_class: 'ph-portrait',
-        portrait_art: '◆'
+        rating: 5,
+        testimonial_text: '',
+        quote: '',
+        display_order: 0,
+        is_active: true,
+        profile_photo: ''
       };
+      selectedTestimonialImageFile = null;
+      const fileInput = document.getElementById('test-image');
+      if (fileInput) fileInput.value = '';
     } catch (err) {
       testimonialError = err.message || 'Failed to add testimonial.';
     } finally {
       isTestimonialSubmitting = false;
     }
   }
+
+  // Edit Testimonials state handlers
+  function startEditTestimonial(t) {
+    editingTestimonialId = t.id;
+    editingTestimonial = {
+      id: t.id,
+      name: t.name || t.author || '',
+      event_type: t.event_type || t.role || t.org || '',
+      rating: t.rating !== undefined ? t.rating : 5,
+      testimonial_text: t.testimonial_text || t.quote || '',
+      display_order: t.display_order !== undefined ? t.display_order : 0,
+      is_active: t.is_active !== false && t.active !== false,
+      profile_photo: t.profile_photo || null
+    };
+    selectedTestimonialImageFile = null;
+  }
+
+  function cancelEditTestimonial() {
+    editingTestimonialId = null;
+    editingTestimonial = null;
+    selectedTestimonialImageFile = null;
+  }
+
+  async function saveEditTestimonial(e) {
+    e.preventDefault();
+    testimonialError = '';
+    isTestimonialSubmitting = true;
+    try {
+      let profilePhotoUrl = editingTestimonial.profile_photo;
+      if (selectedTestimonialImageFile) {
+        const fileExt = selectedTestimonialImageFile.name.split('.').pop();
+        const fileName = `testimonials/${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+        const { error: uploadErr } = await supabase.storage
+          .from('portfolio')
+          .upload(fileName, selectedTestimonialImageFile);
+        
+        if (uploadErr) {
+          throw new Error(`Profile photo upload failed: ${uploadErr.message}`);
+        }
+        
+        const { data: urlData } = supabase.storage.from('portfolio').getPublicUrl(fileName);
+        profilePhotoUrl = urlData.publicUrl;
+      }
+
+      const payload = {
+        name: editingTestimonial.name,
+        author: editingTestimonial.name, // legacy
+        event_type: editingTestimonial.event_type,
+        role: editingTestimonial.event_type, // legacy
+        org: 'Client', // legacy
+        rating: Number(editingTestimonial.rating),
+        testimonial_text: editingTestimonial.testimonial_text,
+        quote: editingTestimonial.testimonial_text, // legacy
+        display_order: Number(editingTestimonial.display_order),
+        is_active: editingTestimonial.is_active,
+        active: editingTestimonial.is_active, // legacy
+        profile_photo: profilePhotoUrl
+      };
+
+      const { data, error } = await supabase
+        .from('testimonials')
+        .update(payload)
+        .eq('id', editingTestimonial.id)
+        .select();
+
+      if (error) throw error;
+
+      if (data && data[0]) {
+        testimonials = testimonials.map(t => t.id === editingTestimonial.id ? data[0] : t);
+      }
+      cancelEditTestimonial();
+    } catch (err) {
+      testimonialError = err.message || 'Failed to update testimonial.';
+    } finally {
+      isTestimonialSubmitting = false;
+    }
+  }
+
+  // Quick active visibility toggle
+  async function toggleTestimonialVisibility(t) {
+    try {
+      const currentActive = t.is_active !== false && t.active !== false;
+      const newStatus = !currentActive;
+      
+      const { data, error } = await supabase
+        .from('testimonials')
+        .update({
+          is_active: newStatus,
+          active: newStatus // legacy
+        })
+        .eq('id', t.id)
+        .select();
+      
+      if (error) throw error;
+      if (data && data[0]) {
+        testimonials = testimonials.map(item => item.id === t.id ? data[0] : item);
+      }
+    } catch (err) {
+      alert(`Failed to toggle visibility: ${err.message}`);
+    }
+  }
+
+  // Swap reordering display order
+  async function moveTestimonial(index, direction) {
+    if (direction === 'up' && index === 0) return;
+    if (direction === 'down' && index === testimonials.length - 1) return;
+
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const item1 = testimonials[index];
+    const item2 = testimonials[targetIndex];
+
+    const order1 = item1.display_order !== undefined ? item1.display_order : index;
+    const order2 = item2.display_order !== undefined ? item2.display_order : targetIndex;
+
+    const newOrder1 = order2;
+    const newOrder2 = order1 === order2 ? order1 + 1 : order1;
+
+    try {
+      const update1 = supabase.from('testimonials').update({ display_order: newOrder1 }).eq('id', item1.id);
+      const update2 = supabase.from('testimonials').update({ display_order: newOrder2 }).eq('id', item2.id);
+
+      const [res1, res2] = await Promise.all([update1, update2]);
+      if (res1.error) throw res1.error;
+      if (res2.error) throw res2.error;
+
+      loadAllData();
+    } catch (err) {
+      alert(`Reordering failed: ${err.message}`);
+    }
+  }
+
 
   // Add service handler
   async function addService(e) {
@@ -801,89 +1006,262 @@
               </div>
 
             {:else if activeTab === 'testimonials'}
+              <!-- SQL MIGRATION INSTRUCTION CARD -->
+              <div class="admin-warning-card" style="margin-bottom: 2rem;">
+                <h3 style="color: var(--gold); display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem;">
+                  <span>⚙️</span> Database Schema Migration Required
+                </h3>
+                <p style="font-size: 0.8rem; margin: 0.5rem 0; opacity: 0.9; line-height: 1.5;">
+                  The redesigned testimonials layout utilizes new database columns. If you are configuring a new Supabase project, copy and run the script below in your Supabase SQL Editor:
+                </p>
+                <details style="font-size: 0.8rem; background: rgba(0,0,0,0.15); padding: 0.8rem; border-radius: 6px; border: 1px solid var(--border);">
+                  <summary style="cursor: pointer; font-weight: 600; color: var(--gold);">Show SQL Script (Click to expand)</summary>
+                  <pre style="margin-top: 0.8rem; overflow-x: auto; font-family: monospace; font-size: 0.72rem; color: #fff; line-height: 1.4; padding: 0.6rem; background: #000; border-radius: 4px;">
+ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS name text;
+ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS profile_photo text;
+ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS event_type text;
+ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS rating integer DEFAULT 5;
+ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS testimonial_text text;
+ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS display_order integer DEFAULT 0;
+ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS is_active boolean DEFAULT true;
+
+-- Migrate old records if any:
+UPDATE testimonials SET name = author WHERE name IS NULL AND author IS NOT NULL;
+UPDATE testimonials SET testimonial_text = quote WHERE testimonial_text IS NULL AND quote IS NOT NULL;
+UPDATE testimonials SET event_type = role WHERE event_type IS NULL AND role IS NOT NULL;
+                  </pre>
+                </details>
+              </div>
+
               <!-- TESTIMONIALS MANAGER SECTION -->
               <div class="portfolio-dashboard-grid">
-                <!-- Add Form -->
+                
+                <!-- Add or Edit Form -->
                 <div class="card-form-wrap">
-                  <h2>Add Testimonial</h2>
-                  {#if testimonialError}
-                    <div class="auth-error">{testimonialError}</div>
+                  {#if editingTestimonialId}
+                    <h2>Edit Testimonial</h2>
+                    {#if testimonialError}
+                      <div class="auth-error">{testimonialError}</div>
+                    {/if}
+                    <form onsubmit={saveEditTestimonial}>
+                      <div class="form-group">
+                        <label for="edit-test-name">Client Name</label>
+                        <input type="text" id="edit-test-name" bind:value={editingTestimonial.name} placeholder="Ava Green" required>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="edit-test-event">Event Type</label>
+                        <select id="edit-test-event" bind:value={editingTestimonial.event_type} required>
+                          <option value="Wedding">Wedding</option>
+                          <option value="Portrait">Portrait</option>
+                          <option value="Family">Family Session</option>
+                          <option value="Corporate">Corporate Branding</option>
+                          <option value="Graduation">Graduation</option>
+                          <option value="Birthday">Birthday</option>
+                          <option value="Other">Other Session</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="edit-test-rating">Star Rating</label>
+                        <select id="edit-test-rating" bind:value={editingTestimonial.rating} required>
+                          <option value={5}>5 Stars (★★★★★)</option>
+                          <option value={4}>4 Stars (★★★★☆)</option>
+                          <option value={3}>3 Stars (★★★☆☆)</option>
+                          <option value={2}>2 Stars (★★☆☆☆)</option>
+                          <option value={1}>1 Star (★☆☆☆☆)</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="edit-test-order">Display Order Index</label>
+                        <input type="number" id="edit-test-order" bind:value={editingTestimonial.display_order} min="0" required>
+                      </div>
+
+                      <div class="form-group" style="margin-bottom:1.5rem;">
+                        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                          <input type="checkbox" bind:checked={editingTestimonial.is_active}> Display on Website (Active)
+                        </label>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="edit-test-image">Profile Photo (Upload to Storage)</label>
+                        <div class="image-uploader-dropzone">
+                          <input type="file" id="edit-test-image" accept="image/*" onchange={(e) => selectedTestimonialImageFile = e.target.files[0]} class="file-input-hidden">
+                          <div class="uploader-prompt">
+                            <span class="uploader-icon">👤</span>
+                            {#if selectedTestimonialImageFile}
+                              <span class="uploader-filename">{selectedTestimonialImageFile.name} ({(selectedTestimonialImageFile.size / 1024 / 1024).toFixed(2)} MB)</span>
+                              <span class="uploader-hint">Click to replace file</span>
+                            {:else if editingTestimonial.profile_photo}
+                              <div class="admin-portfolio-preview rounded-full" style="width: 45px; height: 45px; margin: 0 auto 0.5rem; background-image: url({editingTestimonial.profile_photo}); background-size: cover; background-position: center; border: 1px solid var(--border);"></div>
+                              <span class="uploader-hint">Click to change profile image</span>
+                            {:else}
+                              <span class="uploader-text">Click to select photo</span>
+                              <span class="uploader-hint">PNG, JPG, WebP up to 5MB</span>
+                            {/if}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="edit-test-quote">Quote / Kind Words</label>
+                        <textarea id="edit-test-quote" bind:value={editingTestimonial.testimonial_text} placeholder="Write the testimonial quote..." rows="4" required></textarea>
+                      </div>
+
+                      <div style="display: flex; gap: 1rem;">
+                        <button type="submit" class="submit-btn" disabled={isTestimonialSubmitting}>
+                          {isTestimonialSubmitting ? 'Saving...' : 'Save Changes'}
+                        </button>
+                        <button type="button" class="action-btn-danger" style="border-radius: 0; padding: 0.8rem 1.5rem; font-size: 0.8rem;" onclick={cancelEditTestimonial}>
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  {:else}
+                    <h2>Add Testimonial</h2>
+                    {#if testimonialError}
+                      <div class="auth-error">{testimonialError}</div>
+                    {/if}
+                    <form onsubmit={addTestimonial}>
+                      <div class="form-group">
+                        <label for="test-name">Client Name</label>
+                        <input type="text" id="test-name" bind:value={newTestimonial.name} placeholder="Ava Green" required>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="test-event">Event Type</label>
+                        <select id="test-event" bind:value={newTestimonial.event_type} required>
+                          <option value="Wedding">Wedding</option>
+                          <option value="Portrait">Portrait</option>
+                          <option value="Family">Family Session</option>
+                          <option value="Corporate">Corporate Branding</option>
+                          <option value="Graduation">Graduation</option>
+                          <option value="Birthday">Birthday</option>
+                          <option value="Other">Other Session</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="test-rating">Star Rating</label>
+                        <select id="test-rating" bind:value={newTestimonial.rating} required>
+                          <option value={5}>5 Stars (★★★★★)</option>
+                          <option value={4}>4 Stars (★★★★☆)</option>
+                          <option value={3}>3 Stars (★★★☆☆)</option>
+                          <option value={2}>2 Stars (★★☆☆☆)</option>
+                          <option value={1}>1 Star (★☆☆☆☆)</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="test-order">Display Order Index</label>
+                        <input type="number" id="test-order" bind:value={newTestimonial.display_order} min="0" required>
+                      </div>
+
+                      <div class="form-group" style="margin-bottom:1.5rem;">
+                        <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                          <input type="checkbox" bind:checked={newTestimonial.is_active}> Display on Website (Active)
+                        </label>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="test-image">Profile Photo (Upload to Storage)</label>
+                        <div class="image-uploader-dropzone">
+                          <input type="file" id="test-image" accept="image/*" onchange={(e) => selectedTestimonialImageFile = e.target.files[0]} class="file-input-hidden">
+                          <div class="uploader-prompt">
+                            <span class="uploader-icon">👤</span>
+                            {#if selectedTestimonialImageFile}
+                              <span class="uploader-filename">{selectedTestimonialImageFile.name} ({(selectedTestimonialImageFile.size / 1024 / 1024).toFixed(2)} MB)</span>
+                              <span class="uploader-hint">Click to replace file</span>
+                            {:else}
+                              <span class="uploader-text">Drag & drop or click to select profile photo</span>
+                              <span class="uploader-hint">PNG, JPG, WebP up to 5MB</span>
+                            {/if}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="test-quote">Quote / Kind Words</label>
+                        <textarea id="test-quote" bind:value={newTestimonial.testimonial_text} placeholder="Write the testimonial quote..." rows="4" required></textarea>
+                      </div>
+
+                      <button type="submit" class="submit-btn" disabled={isTestimonialSubmitting}>
+                        {isTestimonialSubmitting ? 'Adding...' : 'Add Testimonial'}
+                      </button>
+                    </form>
                   {/if}
-                  <form onsubmit={addTestimonial}>
-                    <div class="form-group">
-                      <label for="test-author">Client Name / Author</label>
-                      <input type="text" id="test-author" bind:value={newTestimonial.author} placeholder="Damilola Benson" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="test-role">Role Description</label>
-                      <input type="text" id="test-role" bind:value={newTestimonial.role} placeholder="Corporate Branding Client" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="test-org">Organization</label>
-                      <input type="text" id="test-org" bind:value={newTestimonial.org} placeholder="Benson Holdings" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="test-portrait-class">Portrait Style Placeholder Class</label>
-                      <select id="test-portrait-class" bind:value={newTestimonial.portrait_class} required>
-                        <option value="ph-portrait">Portrait Style (ph-portrait)</option>
-                        <option value="ph-wedding">Wedding Style (ph-wedding)</option>
-                        <option value="ph-fashion">Fashion Style (ph-fashion)</option>
-                        <option value="ph-family">Family Style (ph-family)</option>
-                        <option value="ph-corporate">Corporate Style (ph-corporate)</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label for="test-portrait-art">Portrait Art Symbol</label>
-                      <select id="test-portrait-art" bind:value={newTestimonial.portrait_art} required>
-                        <option value="◆">Diamond (◆)</option>
-                        <option value="◈">Dotted Diamond (◈)</option>
-                        <option value="❋">Floral (❋)</option>
-                        <option value="◇">Hollow Diamond (◇)</option>
-                        <option value="✦">Four-Point Star (✦)</option>
-                        <option value="♦">Suit Diamond (♦)</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label for="test-quote">Quote / Kind Words</label>
-                      <textarea id="test-quote" bind:value={newTestimonial.quote} placeholder="Write the testimonial message here..." rows="4" required></textarea>
-                    </div>
-                    <button type="submit" class="submit-btn" disabled={isTestimonialSubmitting}>
-                      {isTestimonialSubmitting ? 'Adding...' : 'Add Testimonial'}
-                    </button>
-                  </form>
                 </div>
 
                 <!-- Existing Testimonials List -->
                 <div class="card-table-wrap">
-                  <h2>Active Testimonials</h2>
+                  <h2>Testimonial Records</h2>
                   {#if testimonials.length === 0}
-                    <p class="empty-state">No testimonials found in database. Using defaults.</p>
+                    <p class="empty-state">No testimonials found in database.</p>
                   {:else}
                     <div class="table-responsive">
                       <table class="admin-table">
                         <thead>
                           <tr>
-                            <th>Visual</th>
-                            <th>Author & Org</th>
+                            <th>Photo</th>
+                            <th>Author & Type</th>
                             <th>Quote Preview</th>
-                            <th>Action</th>
+                            <th>Rating</th>
+                            <th>Active</th>
+                            <th>Order</th>
+                            <th>Actions</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {#each testimonials as t (t.id)}
+                          {#each testimonials.sort((a, b) => (a.display_order || 0) - (b.display_order || 0)) as t, idx (t.id)}
                             <tr>
                               <td>
-                                <div class="admin-portfolio-preview {t.portrait_class}" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
-                                  {t.portrait_art}
+                                {#if t.profile_photo}
+                                  <div class="admin-portfolio-preview rounded-full" style="width:40px;height:40px;background-image:url({t.profile_photo});background-size:cover;background-position:center;border:1px solid var(--border);"></div>
+                                {:else}
+                                  <div class="admin-portfolio-preview rounded-full bg-zinc-800 text-gold" style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:bold;border:1px solid var(--border);">
+                                    {(t.name || t.author || 'C')[0]}
+                                  </div>
+                                {/if}
+                              </td>
+                              <td>
+                                <strong>{t.name || t.author || 'Anonymous'}</strong><br>
+                                <span class="badge badge-gold" style="font-size: 0.6rem; padding: 0.15rem 0.4rem;">
+                                  {t.event_type || t.role || 'Session'}
+                                </span>
+                              </td>
+                              <td><small class="notes-preview" title={t.testimonial_text || t.quote}>{t.testimonial_text || t.quote}</small></td>
+                              <td style="color:var(--gold); font-size:0.8rem;">{'★'.repeat(t.rating || 5)}</td>
+                              <td>
+                                <input 
+                                  type="checkbox" 
+                                  checked={t.is_active !== false && t.active !== false} 
+                                  onchange={() => toggleTestimonialVisibility(t)}
+                                  style="cursor:pointer; width:16px; height:16px;"
+                                />
+                              </td>
+                              <td>
+                                <div style="display:flex; flex-direction:column; gap:0.2rem; align-items:center;">
+                                  <button 
+                                    class="cat-btn" 
+                                    style="padding:0.1rem 0.4rem; font-size:0.6rem;" 
+                                    onclick={() => moveTestimonial(idx, 'up')}
+                                    disabled={idx === 0}
+                                  >▲</button>
+                                  <span style="font-size:0.75rem; font-weight:600; color:var(--gold);">{t.display_order || 0}</span>
+                                  <button 
+                                    class="cat-btn" 
+                                    style="padding:0.1rem 0.4rem; font-size:0.6rem;" 
+                                    onclick={() => moveTestimonial(idx, 'down')}
+                                    disabled={idx === testimonials.length - 1}
+                                  >▼</button>
                                 </div>
                               </td>
                               <td>
-                                <strong>{t.author}</strong><br>
-                                <small style="color:var(--muted)">{t.role} / {t.org}</small>
-                              </td>
-                              <td><small class="notes-preview" title={t.quote}>{t.quote}</small></td>
-                              <td>
-                                <button class="action-btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.7rem;" onclick={() => deleteTestimonial(t.id)}>Delete</button>
+                                <div style="display:flex; gap:0.5rem;">
+                                  <button class="cat-btn" style="padding:0.3rem 0.6rem; font-size:0.7rem; color:var(--ivory); border-color:var(--border);" onclick={() => startEditTestimonial(t)}>Edit</button>
+                                  <button class="action-btn-danger" style="padding:0.3rem 0.6rem; font-size:0.7rem;" onclick={() => deleteTestimonial(t.id)}>Delete</button>
+                                </div>
                               </td>
                             </tr>
                           {/each}
