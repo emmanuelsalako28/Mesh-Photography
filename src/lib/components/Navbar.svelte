@@ -38,7 +38,7 @@
       </div>
     </div>
     
-    <a href="#blog" class:active={currentPage === 'blog'} onclick={(e) => { e.preventDefault(); showPage('blog'); }}>blog</a>
+    <a href="#blog" class:active={currentPage === 'blog'} onclick={(e) => { e.preventDefault(); showPage('blog'); }}>Blog</a>
     
     <div class="nav-item-dropdown">
       <a href="#contact" class:active={currentPage === 'contact' || currentPage === 'booking'} onclick={(e) => { e.preventDefault(); showPage('contact'); }}>
