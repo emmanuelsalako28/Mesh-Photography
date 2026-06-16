@@ -965,43 +965,51 @@
     {:else}
       <!-- Logged-in Dashboard -->
       <div class="dashboard-wrap">
-        <div class="dashboard-header">
-          <div class="dashboard-user">
+        <!-- Sidebar Navigation -->
+        <div class="dashboard-sidebar">
+          <div class="sidebar-user">
+            <span>Admin Control Panel</span>
+            <small>{session.user.email}</small>
+          </div>
+
+          <div class="dashboard-tabs">
+            <button class="tab-btn" class:active={activeTab === 'bookings'} onclick={() => activeTab = 'bookings'}>
+              Bookings ({bookings.length})
+            </button>
+            <button class="tab-btn" class:active={activeTab === 'messages'} onclick={() => activeTab = 'messages'}>
+              Messages ({messages.length})
+            </button>
+            <button class="tab-btn" class:active={activeTab === 'portfolio'} onclick={() => activeTab = 'portfolio'}>
+              Portfolio ({portfolioItems.length})
+            </button>
+            <button class="tab-btn" class:active={activeTab === 'testimonials'} onclick={() => activeTab = 'testimonials'}>
+              Testimonials ({testimonials.length})
+            </button>
+            <button class="tab-btn" class:active={activeTab === 'services'} onclick={() => activeTab = 'services'}>
+              Services ({services.length})
+            </button>
+            <button class="tab-btn" class:active={activeTab === 'about'} onclick={() => activeTab = 'about'}>
+              About Bio
+            </button>
+            <button class="tab-btn" class:active={activeTab === 'blog'} onclick={() => activeTab = 'blog'}>
+              Blog ({blogPosts.length})
+            </button>
+          </div>
+
+          <button class="logout-btn" onclick={handleLogout} style="width: 100%; margin-top: auto;">Logout / Exit</button>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="dashboard-body">
+          <div class="dashboard-body-header">
             <span>Access level: <strong>Administrator</strong> ({session.user.email})</span>
           </div>
-          <button class="logout-btn" onclick={handleLogout}>Logout / Exit</button>
-        </div>
 
-        <!-- Tab Controls -->
-        <div class="dashboard-tabs">
-          <button class="tab-btn" class:active={activeTab === 'bookings'} onclick={() => activeTab = 'bookings'}>
-            Bookings ({bookings.length})
-          </button>
-          <button class="tab-btn" class:active={activeTab === 'messages'} onclick={() => activeTab = 'messages'}>
-            Messages ({messages.length})
-          </button>
-          <button class="tab-btn" class:active={activeTab === 'portfolio'} onclick={() => activeTab = 'portfolio'}>
-            Portfolio ({portfolioItems.length})
-          </button>
-          <button class="tab-btn" class:active={activeTab === 'testimonials'} onclick={() => activeTab = 'testimonials'}>
-            Testimonials ({testimonials.length})
-          </button>
-          <button class="tab-btn" class:active={activeTab === 'services'} onclick={() => activeTab = 'services'}>
-            Services ({services.length})
-          </button>
-          <button class="tab-btn" class:active={activeTab === 'about'} onclick={() => activeTab = 'about'}>
-            About Bio
-          </button>
-          <button class="tab-btn" class:active={activeTab === 'blog'} onclick={() => activeTab = 'blog'}>
-            Blog ({blogPosts.length})
-          </button>
-        </div>
-
-        {#if isDataLoading}
-          <div class="admin-loading">Fetching data feeds...</div>
-        {:else}
-          <!-- Tab Contents -->
-          <div class="tab-content">
+          {#if isDataLoading}
+            <div class="admin-loading">Fetching data feeds...</div>
+          {:else}
+            <!-- Tab Contents -->
+            <div class="tab-content">
             {#if activeTab === 'bookings'}
               <!-- BOOKINGS SECTION -->
               <div class="card-table-wrap">
@@ -1896,6 +1904,7 @@ CREATE POLICY "Allow authenticated delete" ON homepage_services FOR DELETE USING
             {/if}
           </div>
         {/if}
+        </div>
       </div>
     {/if}
   </div>
@@ -1986,70 +1995,144 @@ CREATE POLICY "Allow authenticated delete" ON homepage_services FOR DELETE USING
     margin-bottom: 1.5rem;
   }
 
-  /* DASHBOARD HEADER */
+  /* DASHBOARD SPLIT LAYOUT */
   .dashboard-wrap {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 3rem;
     margin-top: 2rem;
+    align-items: start;
   }
-  .dashboard-header {
+  .dashboard-sidebar {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    background: var(--dark);
+    border: 1px solid var(--border);
+    padding: 2.5rem 1.5rem;
+    height: auto;
+    min-height: calc(100vh - 12rem);
+    position: sticky;
+    top: 2rem;
+  }
+  .sidebar-user {
+    display: flex;
+    flex-direction: column;
     border-bottom: 1px solid var(--border);
     padding-bottom: 1.5rem;
     margin-bottom: 2rem;
   }
-  .dashboard-user {
-    font-size: 0.88rem;
-    color: var(--muted);
+  .sidebar-user span {
+    font-family: var(--sans);
+    font-weight: 700;
+    color: var(--ivory);
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
-  .dashboard-user strong {
-    color: var(--gold);
+  .sidebar-user small {
+    color: var(--muted);
+    font-size: 0.75rem;
+    word-break: break-all;
+    margin-top: 0.25rem;
   }
   .logout-btn {
     background: transparent;
     border: 1px solid var(--border);
     color: var(--ivory);
-    padding: 0.5rem 1.2rem;
+    padding: 0.7rem 1.2rem;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     cursor: pointer;
     font-weight: 600;
     transition: all 0.3s;
+    text-align: center;
   }
   .logout-btn:hover {
     border-color: #ff6b6b;
     color: #ff6b6b;
   }
 
-  /* TABS */
+  /* TABS - VERTICAL COLUMN STACK */
   .dashboard-tabs {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 3rem;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 1px;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    border-bottom: none;
+    padding-bottom: 0;
   }
   .tab-btn {
     background: transparent;
-    border: none;
-    border-bottom: 2px solid transparent;
+    border: 1px solid transparent;
+    border-radius: 4px;
     color: var(--muted);
-    padding: 0.8rem 1.5rem;
+    padding: 0.8rem 1.2rem;
     cursor: pointer;
     font-family: var(--sans);
-    font-size: 0.85rem;
-    letter-spacing: 0.1em;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     font-weight: 600;
-    transition: all 0.3s;
+    text-align: left;
+    transition: all 0.2s ease;
   }
   .tab-btn:hover {
     color: var(--ivory);
+    background: rgba(255, 255, 255, 0.02);
   }
   .tab-btn.active {
     color: var(--gold);
-    border-bottom-color: var(--gold);
+    background: rgba(184, 147, 54, 0.08);
+    border-color: rgba(184, 147, 54, 0.2);
+  }
+  .dashboard-body {
+    min-width: 0;
+  }
+  .dashboard-body-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+    margin-bottom: 3rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-align: right;
+  }
+  .dashboard-body-header strong {
+    color: var(--gold);
+  }
+
+  /* Responsive styling */
+  @media (max-width: 991px) {
+    .dashboard-wrap {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .dashboard-sidebar {
+      min-height: auto;
+      position: static;
+      padding: 1.5rem;
+    }
+    .dashboard-tabs {
+      flex-direction: row;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1px;
+    }
+    .tab-btn {
+      text-align: center;
+      border: none;
+      border-bottom: 2px solid transparent;
+      border-radius: 0;
+      padding: 0.8rem 1rem;
+    }
+    .tab-btn.active {
+      background: transparent;
+      border-bottom-color: var(--gold);
+    }
+    .dashboard-body-header {
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+    }
   }
 
   /* CARD LAYOUTS */
