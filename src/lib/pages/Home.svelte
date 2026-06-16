@@ -3,6 +3,7 @@
   import { onMount } from 'svelte';
   import { supabase } from '../supabaseClient.js';
   import TestimonialsCarousel from '../components/ui/TestimonialsCarousel.svelte';
+  import Hero from '../components/Hero.svelte';
 
   let { showPage, openLightbox } = $props();
 
@@ -213,39 +214,8 @@
 </script>
 
 <div class="page active" id="page-home">
-  <!-- HERO SLIDER -->
-  <div class="hero-slider-wrap">
-    <!-- Slide 1 -->
-    <div class="hero-slide" class:active={activeSlide === 0} style="--hero-img: url('/hero1.png');">
-      <div class="hero-content">
-        <span class="hero-eyebrow">Lens & Light Studio</span>
-        <h1 class="hero-title">Capturing Timeless<br><em>Stories</em></h1>
-        <p class="hero-sub" style="letter-spacing: 0.15em;">We create elegant portraits, personal branding imagery, and unforgettable visual stories.</p>
-        <div class="hero-btns">
-          <button class="btn-primary" onclick={() => showPage('booking')}>Book Session</button>
-          <button class="btn-outline" onclick={() => showPage('portfolio')}>View Portfolio</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Slide 2 -->
-    <div class="hero-slide" class:active={activeSlide === 1} style="--hero-img: url('/hero2.jpg');">
-      <div class="hero-content">
-        <span class="hero-eyebrow">Creative Direction</span>
-        <h1 class="hero-title">Fine Art &<br><em>Editorial Visuals</em></h1>
-        <p class="hero-sub" style="letter-spacing: 0.15em;">Polished branding, executive headshots, and editorial collections tailored to your brand.</p>
-        <div class="hero-btns">
-          <button class="btn-primary" onclick={() => showPage('booking')}>Book Session</button>
-          <button class="btn-outline" onclick={() => showPage('portfolio')}>View Portfolio</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="hero-scroll">
-      <span class="scroll-text">Scroll</span>
-      <div class="scroll-line"></div>
-    </div>
-  </div>
+  <!-- REDESIGNED HERO SECTION -->
+  <Hero {showPage} />
 
   <!-- SELECTED WORK -->
   <section class="section" style="background:transparent; position:relative; z-index:10; padding: 0;">
