@@ -1230,11 +1230,13 @@ ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS rating integer DEFAULT 5;
 ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS testimonial_text text;
 ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS display_order integer DEFAULT 0;
 ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS is_active boolean DEFAULT true;
+ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS active boolean DEFAULT true;
 
 -- Migrate old records if any:
 UPDATE testimonials SET name = author WHERE name IS NULL AND author IS NOT NULL;
 UPDATE testimonials SET testimonial_text = quote WHERE testimonial_text IS NULL AND quote IS NOT NULL;
 UPDATE testimonials SET event_type = role WHERE event_type IS NULL AND role IS NOT NULL;
+UPDATE testimonials SET active = is_active WHERE active IS NULL AND is_active IS NOT NULL;
                   </pre>
                 </details>
               </div>
