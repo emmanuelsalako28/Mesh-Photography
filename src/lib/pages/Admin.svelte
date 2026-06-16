@@ -76,6 +76,7 @@
   let selectedTestimonialImageFile = $state(null);
   let testimonialError = $state('');
   let isTestimonialSubmitting = $state(false);
+  let testimonialsMigrationRequired = $state(false);
 
   // New Service Form State
   let newService = $state({
@@ -221,7 +222,13 @@
         .select('*')
         .order('created_at', { ascending: false });
       if (tErr) throw tErr;
+      console.log('Testimonials database records fetched:', tData);
       testimonials = tData || [];
+      if (tData && tData.length > 0) {
+        testimonialsMigrationRequired = !('name' in tData[0]);
+      } else {
+        testimonialsMigrationRequired = false;
+      }
 
       // Load services
       const { data: sData, error: sErr } = await supabase
@@ -1220,17 +1227,18 @@
               </div>
 
             {:else if activeTab === 'testimonials'}
-              <!-- SQL MIGRATION INSTRUCTION CARD -->
-              <div class="admin-warning-card" style="margin-bottom: 2rem;">
-                <h3 style="color: var(--gold); display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem;">
-                  <span>⚙️</span> Database Schema Migration Required
-                </h3>
-                <p style="font-size: 0.8rem; margin: 0.5rem 0; opacity: 0.9; line-height: 1.5;">
-                  The redesigned testimonials layout utilizes new database columns. If you are configuring a new Supabase project, copy and run the script below in your Supabase SQL Editor:
-                </p>
-                <details style="font-size: 0.8rem; background: rgba(0,0,0,0.15); padding: 0.8rem; border-radius: 6px; border: 1px solid var(--border);">
-                  <summary style="cursor: pointer; font-weight: 600; color: var(--gold);">Show SQL Script (Click to expand)</summary>
-                  <pre style="margin-top: 0.8rem; overflow-x: auto; font-family: monospace; font-size: 0.72rem; color: #fff; line-height: 1.4; padding: 0.6rem; background: #000; border-radius: 4px;">
+              {#if testimonialsMigrationRequired}
+                 <!-- SQL MIGRATION INSTRUCTION CARD -->
+                 <div class="admin-warning-card" style="margin-bottom: 2rem;">
+                   <h3 style="color: var(--gold); display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem;">
+                     <span>⚙️</span> Database Schema Migration Required
+                   </h3>
+                   <p style="font-size: 0.8rem; margin: 0.5rem 0; opacity: 0.9; line-height: 1.5;">
+                     The redesigned testimonials layout utilizes new database columns. If you are configuring a new Supabase project, copy and run the script below in your Supabase SQL Editor:
+                   </p>
+                   <details style="font-size: 0.8rem; background: rgba(0,0,0,0.15); padding: 0.8rem; border-radius: 6px; border: 1px solid var(--border);">
+                     <summary style="cursor: pointer; font-weight: 600; color: var(--gold);">Show SQL Script (Click to expand)</summary>
+                     <pre style="margin-top: 0.8rem; overflow-x: auto; font-family: monospace; font-size: 0.72rem; color: #fff; line-height: 1.4; padding: 0.6rem; background: #000; border-radius: 4px;">
 ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS name text;
 ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS profile_photo text;
 ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS event_type text;
@@ -1245,9 +1253,10 @@ UPDATE testimonials SET name = author WHERE name IS NULL AND author IS NOT NULL;
 UPDATE testimonials SET testimonial_text = quote WHERE testimonial_text IS NULL AND quote IS NOT NULL;
 UPDATE testimonials SET event_type = role WHERE event_type IS NULL AND role IS NOT NULL;
 UPDATE testimonials SET active = is_active WHERE active IS NULL AND is_active IS NOT NULL;
-                  </pre>
-                </details>
-              </div>
+                     </pre>
+                   </details>
+                 </div>
+               {/if}
 
               <!-- TESTIMONIALS MANAGER SECTION -->
               <div class="portfolio-dashboard-grid">
