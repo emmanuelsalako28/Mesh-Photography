@@ -22,7 +22,8 @@
         <a href="#portfolio-portraits" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'portraits'); }}>Portraits</a>
         <a href="#portfolio-events" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'events'); }}>Events</a>
         <a href="#portfolio-family" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'family'); }}>Family</a>
-        <a href="#portfolio-corporate" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'corporate'); }}>Corporate</a>
+        <a href="#portfolio-corporate" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'corporate'); }}>Kids</a>
+        <a href="#portfolio-fashion" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'fashion'); }}>Maternity</a>
         <a href="#portfolio-fashion" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'fashion'); }}>Fashion</a>
         <a href="#portfolio-all" onclick={(e) => { e.preventDefault(); showPage('portfolio', 'all'); }}>All Pictures</a>
       </div>
