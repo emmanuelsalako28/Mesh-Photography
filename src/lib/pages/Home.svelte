@@ -216,28 +216,8 @@
   </div>
 
   <!-- SELECTED WORK -->
-  <section class="section" style="background:transparent; position:relative; z-index:10; border-top: 1px solid var(--border); padding: 6rem 0 0 0;">
-    <div style="max-width:1200px;margin:0 auto; padding: 0 3rem;">
-      <div class="section-header reveal">
-        <div>
-          <span class="section-label">Selected work</span>
-          <h2 class="section-title" style="font-family:var(--serif); font-style:italic; font-weight:300;">featured photography</h2>
-        </div>
-        <div>
-          <p class="section-sub">A curated selection of our favorite shots across different sessions.</p>
-          <br>
-          <div class="categories">
-            <button class="cat-btn" class:active={activeFilter === 'all'} onclick={() => activeFilter = 'all'}>All</button>
-            <button class="cat-btn" class:active={activeFilter === 'portraits'} onclick={() => activeFilter = 'portraits'}>Portraits</button>
-            <button class="cat-btn" class:active={activeFilter === 'events'} onclick={() => activeFilter = 'events'}>Events</button>
-            <button class="cat-btn" class:active={activeFilter === 'corporate'} onclick={() => activeFilter = 'corporate'}>Corporate</button>
-            <button class="cat-btn" class:active={activeFilter === 'family'} onclick={() => activeFilter = 'family'}>Family</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="photo-grid reveal" style="width: 100%; margin-top: 3rem; gap: 0;">
+  <section class="section" style="background:transparent; position:relative; z-index:10; padding: 0;">
+    <div class="photo-grid reveal" style="width: 100%; margin-top: 0; gap: 0;">
       {#each filteredPhotos as photo (photo.id)}
         <div class="photo-card card-3d" onmousemove={handleMouseMove3D} onmouseleave={handleMouseLeave3D} onclick={() => openLightbox(photo.label, photo.class, photo.art, photo.image_url)} role="button" tabindex="0" onkeydown={(e) => e.key === 'Enter' && openLightbox(photo.label, photo.class, photo.art, photo.image_url)}>
           <div class="photo-placeholder {photo.class} card-3d-inner" style="position: relative; {photo.image_url ? `background-image: url(${photo.image_url}); background-size: cover; background-position: center;` : photo.style || ''}">
@@ -256,6 +236,21 @@
         <button class="view-all" onclick={() => showPage('portfolio')} style="background:none; border:none; font-family:var(--sans)">
           view full portfolio →
         </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="section" style="border-top: 1px solid var(--border); padding-top: 3.5rem; padding-bottom: 4rem;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 3rem;">
+      <div class="reveal" style="margin-bottom: 2.5rem; text-align: left;">
+        <h2 style="font-family: var(--sans); font-size: 1.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ivory); margin-bottom: 0.75rem;">
+          Testimonials
+        </h2>
+        <div style="width: 60px; height: 4px; background: var(--ivory);"></div>
+      </div>
+      <div class="reveal" style="margin-top: 2rem;">
+        <TestimonialsCarousel testimonials={activeTestimonialsList} />
       </div>
     </div>
   </section>
@@ -296,21 +291,6 @@
             <span class="service-learn-more" style="color:var(--gold); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; display:inline-block; margin-top:1.5rem; font-weight:600;">Learn More →</span>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TESTIMONIALS -->
-  <section class="section" style="border-top: 1px solid var(--border); padding-top: 3.5rem; padding-bottom: 4rem;">
-    <div style="max-width: 1200px; margin: 0 auto; padding: 0 3rem;">
-      <div class="reveal" style="margin-bottom: 2.5rem; text-align: left;">
-        <h2 style="font-family: var(--sans); font-size: 1.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ivory); margin-bottom: 0.75rem;">
-          Testimonials
-        </h2>
-        <div style="width: 60px; height: 4px; background: var(--ivory);"></div>
-      </div>
-      <div class="reveal" style="margin-top: 2rem;">
-        <TestimonialsCarousel testimonials={activeTestimonialsList} />
       </div>
     </div>
   </section>
