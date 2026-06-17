@@ -16,6 +16,9 @@
     };
   });
 
+  /**
+   * @param {MouseEvent} e
+   */
   function handleOverlayClick(e) {
     if (e.target === e.currentTarget) {
       closeLightbox();

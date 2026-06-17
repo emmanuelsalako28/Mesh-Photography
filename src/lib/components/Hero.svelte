@@ -7,6 +7,7 @@
 
   let mounted = $state(false);
   let activeSlide = $state(0); // 0 or 1
+  /** @type {any} */
   let intervalId;
 
   const slides = [
@@ -179,14 +180,6 @@
     border-radius: 9999px !important;
   }
 
-  .left-section {
-    padding-top: 140px !important;
-  }
-  @media (min-width: 1024px) {
-    .left-section {
-      padding-top: 180px !important;
-    }
-  }
 
   .hero-title {
     font-size: 2.6rem !important;
