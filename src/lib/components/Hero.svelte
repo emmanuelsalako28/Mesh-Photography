@@ -114,7 +114,7 @@
           <div 
             in:fade={{ duration: 1000, delay: 1000 }}
             class="absolute bottom-8 {slide.isImageLeft ? 'left-8' : 'right-8'} z-20 hidden sm:flex items-center gap-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-full py-2 px-4 shadow-sm text-white">
-            <span class="text-[10px] uppercase tracking-[0.2em] font-medium font-sans">Mesh Photography Studio</span>
+            <span class="text-[10px] uppercase tracking-[0.2em] font-medium font-sans">Meshach Olajide Studios</span>
           </div>
 
           <!-- Main Portrait Image -->

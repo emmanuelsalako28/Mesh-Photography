@@ -1123,7 +1123,8 @@
                         <option value="portraits">Portraits</option>
                         <option value="events">Events</option>
                         <option value="family">Family</option>
-                        <option value="corporate">Corporate</option>
+                        <option value="maternity">Maternity</option>
+                        <option value="kids">Kids</option>
                         <option value="fashion">Fashion</option>
                         <option value="videos">Videos</option>
                       </select>
