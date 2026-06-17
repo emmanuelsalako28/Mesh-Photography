@@ -1739,14 +1739,6 @@ footer {
   to { width: 100%; }
 }
 
-/* ==================== INSTAGRAM SOCIAL GRID ==================== */
-.social-hover {
-  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s ease !important;
-}
-.social-hover:hover {
-  transform: translateY(-4px) scale(1.02);
-  border-color: var(--gold) !important;
-}
 
 /* ==================== STICKY BOTTOM ACTIONS BAR ==================== */
 .mobile-sticky-bar {

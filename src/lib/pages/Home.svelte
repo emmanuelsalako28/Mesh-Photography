@@ -287,25 +287,6 @@
     </div>
   </section>
 
-  <!-- INSTAGRAM / SOCIAL PROOF -->
-  <section class="section" style="border-top: 1px solid var(--border);">
-    <div style="max-width: 1200px; margin: 0 auto; padding: 0 3rem; text-align: center;">
-      <span class="section-label">social proof</span>
-      <h2 style="font-family: var(--serif); font-style: italic; font-weight: 300; margin-bottom: 1rem;">follow our journey</h2>
-      <p style="color:var(--muted); max-width:500px; margin: 0 auto 3rem; font-size:0.9rem;">
-        Get a daily dose of visual inspiration and behind-the-scenes stories on Instagram.
-      </p>
-      
-      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; margin-bottom:3rem;">
-        <div style="background:linear-gradient(145deg,#1e1508,#0c0c0c); aspect-ratio:1/1; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:3rem; color:rgba(201,167,78,0.08);" class="social-hover">◆</div>
-        <div style="background:linear-gradient(145deg,#15201a,#0d1810); aspect-ratio:1/1; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:3rem; color:rgba(201,167,78,0.08);" class="social-hover">◈</div>
-        <div style="background:linear-gradient(145deg,#151520,#0c0c18); aspect-ratio:1/1; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:3rem; color:rgba(201,167,78,0.08);" class="social-hover">◇</div>
-        <div style="background:linear-gradient(145deg,#201518,#180d10); aspect-ratio:1/1; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:3rem; color:rgba(201,167,78,0.08);" class="social-hover">❋</div>
-      </div>
-      
-      <a class="btn-outline" href="https://instagram.com/meshacholajidephotography" target="_blank" rel="noopener noreferrer">@meshacholajidephotography</a>
-    </div>
-  </section>
 
   <!-- CTA BANNER -->
   <section class="cta-banner" style="border-top: 1px solid var(--border);">
