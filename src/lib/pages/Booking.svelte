@@ -143,7 +143,7 @@
             </div>
             <div class="form-group">
               <label for="phone">Phone / WhatsApp</label>
-              <input type="tel" id="phone" bind:value={bookingData.phone} placeholder="+234 815 114 0526" required>
+              <input type="tel" id="phone" bind:value={bookingData.phone} placeholder="+234 813 824 5455" required>
             </div>
           </div>
           <div class="form-group">
@@ -199,18 +199,18 @@
       </div>
       <div class="booking-info">
         <h2 style="font-family:var(--serif);font-size:1.5rem;margin-bottom:2rem;color:var(--gold)">Quick Contact</h2>
-        <a class="contact-method" href="https://wa.me/2348151140526" target="_blank" rel="noopener noreferrer">
+        <a class="contact-method" href="https://wa.me/2348138245455" target="_blank" rel="noopener noreferrer">
           <div class="cm-icon">WA</div>
           <div class="cm-text">
             <span class="cm-label">WhatsApp (Fastest)</span>
-            <span class="cm-val">+234 815 114 0526</span>
+            <span class="cm-val">+234 813 824 5455</span>
           </div>
         </a>
-        <a class="contact-method" href="tel:+2348151140526">
+        <a class="contact-method" href="tel:+2348138245455">
           <div class="cm-icon">📞</div>
           <div class="cm-text">
             <span class="cm-label">Call Us</span>
-            <span class="cm-val">+234 815 114 0526</span>
+            <span class="cm-val">+234 813 824 5455</span>
           </div>
         </a>
         <a class="contact-method" href="mailto:office@meshacholajide.com">
